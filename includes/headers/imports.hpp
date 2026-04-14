@@ -21,6 +21,8 @@
     # include <sstream>
     # include <map>
     # include <vector>
+    # include <cstdlib>
+    # include <stdexcept>
 
 
 #endif
