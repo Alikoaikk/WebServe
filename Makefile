@@ -4,6 +4,7 @@ CXX     = c++
 CXXFLAGS = -g -Wall -Wextra -Werror -std=c++98
 
 SRCS    = main.cpp \
+          printing.cpp \
           src/parsing.cpp \
           src/tokenize.cpp \
           src/servParsing.cpp \

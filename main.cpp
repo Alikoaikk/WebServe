@@ -6,7 +6,7 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 02:32:47 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/14 22:02:55 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/04/15 16:45:06 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,17 @@
 
 #include "includes/classes/parsing.hpp"
 
-int main(void)
+int main(int argc, char** argv)
 {
+    if (argc != 2)
+    {
+        std::cerr << "Usage: ./webserv <config file>" << std::endl;
+        return 1;
+    }
     try
     {
-        parse p("hard.conf");
-
-        for (size_t s = 0; s < p.servers.size(); s++)
-        {
-            std::cout << "--- server " << s << " ---" << std::endl;
-            std::cout << "host: " << p.servers[s].host << std::endl;
-            std::cout << "port: " << p.servers[s].port << std::endl;
-            std::cout << "client_max_body_size: " << p.servers[s].clientMaxBodySize << std::endl;
-
-            for (size_t l = 0; l < p.servers[s].locations.size(); l++)
-                std::cout << "  location: " << p.servers[s].locations[l].path << std::endl;
-        }
+        parse p(argv[1]);
+        printConfig(p);
     }
     catch (const std::exception& e)
     {

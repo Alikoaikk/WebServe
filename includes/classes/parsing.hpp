@@ -51,6 +51,7 @@ std::vector<std::string>    tokenize(const std::string &filename);
 void                        expectSemicolon(const std::vector<std::string>& tokens, size_t& i);
 unsigned int                parseSize(const std::string& str);
 void                        parseLocationBlock(std::vector<std::string>& tokens, size_t& i, parse::locConfig& lc);
+void                        printConfig(const parse& p);
 
 
 #endif
