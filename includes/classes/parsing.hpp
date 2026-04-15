@@ -6,7 +6,7 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 17:06:11 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/14 17:25:01 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/04/15 16:29:13 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,14 @@ class parse
         std::vector<serConfig>  servers ;
         parse(std::string configFileName);
         void parseTokens(std::vector<std::string> tokens);
-        void parseServerBlock(const std::vector<std::string>& tokens, size_t& i, serConfig& sc);
+        void parseServerBlock(std::vector<std::string>& tokens, size_t& i, serConfig& sc);
 };
 
 std::vector<std::string>    tokenize(const std::string &filename);
 void                        expectSemicolon(const std::vector<std::string>& tokens, size_t& i);
 unsigned int                parseSize(const std::string& str);
+void                        parseLocationBlock(std::vector<std::string>& tokens, size_t& i, parse::locConfig& lc);
+
 
 #endif
 

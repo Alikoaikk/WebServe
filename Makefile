@@ -6,7 +6,8 @@ CXXFLAGS = -g -Wall -Wextra -Werror -std=c++98
 SRCS    = main.cpp \
           src/parsing.cpp \
           src/tokenize.cpp \
-          src/servBlockParsing.cpp
+          src/servParsing.cpp \
+          src/locationParsing.cpp
 
 OBJS    = $(SRCS:.cpp=.o)
 

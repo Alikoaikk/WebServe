@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   servBlockParsing.cpp                              :+:      :+:    :+:   */
+/*   servParsing.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -35,7 +35,7 @@ static void parseListen
 
 static void parseClientMaxBodySize
 (
-    const std::vector<std::string>& tokens,
+    std::vector<std::string>& tokens,
     size_t& i,
     parse::serConfig& sc
 )
@@ -57,7 +57,7 @@ static void parseErrorPage(const std::vector<std::string>& tokens, size_t& i, pa
     expectSemicolon(tokens, i);
 }
 
-static void parseLocation(const std::vector<std::string>& tokens, size_t& i, parse::serConfig& sc)
+static void parseLocation(std::vector<std::string>& tokens, size_t& i, parse::serConfig& sc)
 {
     i++;
     parse::locConfig lc;
@@ -68,13 +68,13 @@ static void parseLocation(const std::vector<std::string>& tokens, size_t& i, par
     if (i >= tokens.size() || tokens[i] != "{")
         throw std::runtime_error("expected '{' after location path");
     i++;
-    // parseLocationBlock(tokens, i, lc); // will be implemented next
+    parseLocationBlock(tokens, i, lc);
     sc.locations.push_back(lc);
 }
 
 void parse::parseServerBlock
 (
-    const std::vector<std::string>& tokens,
+    std::vector<std::string>& tokens,
     size_t& i,
     serConfig& sc
 )

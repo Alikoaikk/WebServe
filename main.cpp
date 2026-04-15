@@ -18,7 +18,7 @@ int main(void)
 {
     try
     {
-        parse p("default.conf");
+        parse p("hard.conf");
 
         for (size_t s = 0; s < p.servers.size(); s++)
         {
