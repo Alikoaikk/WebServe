@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 21:15:37 by msafa             #+#    #+#             */
-/*   Updated: 2026/04/12 17:52:55 by msafa            ###   ########.fr       */
+/*   Updated: 2026/04/18 17:04:25 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,24 +39,29 @@ step 4: bind socket to address so the OS will register the socket on the
 step 5: listen for connections
         128 is how many pending connections can queue up so if 128 clients
         try to connect before we accept the 129th gets refused
-
 */
 
-int Socket::createListenSocket(const std::string& host, int port)
+static int createSocket()
 {
-    struct sockaddr_in addr;
-    
     int fd = socket(AF_INET, SOCK_STREAM,0);
     if(fd == -1)
         throw std::runtime_error("Socket() failed");
+    return fd;
+}
 
+static void configureSocket(int fd)
+{
     int option = 1;
     if(setsockopt(fd, SOL_SOCKET,SO_REUSEADDR,&option,sizeof(option)) < 0)
     {
         close(fd);
         throw std::runtime_error("setsockopt SO_REUSEADDR failed");
     }
+}
 
+static void bindSocket(int fd, const std::string& host, int port)
+{
+    struct sockaddr_in addr;
     std::memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
@@ -65,20 +70,28 @@ int Socket::createListenSocket(const std::string& host, int port)
         close(fd);
         throw std::runtime_error("Invalid host: " + host);
     }
-
-    if(bind(fd,(struct sockaddr*)&addr,sizeof(addr)) < 0)
+     if(bind(fd,(struct sockaddr*)&addr,sizeof(addr)) < 0)
     {
         close(fd);
         throw std::runtime_error("bind() failed");
     }
-    
+}
+
+static void listenSocket(int fd)
+{
     if(listen(fd,128) < 0)
     {
         close(fd);
         throw std::runtime_error("listen() failed");
     }
+}
 
-    //make the socket non-blocking so poll() can manage it without blocking
+int Socket::createListenSocket(const std::string& host, int port)
+{
+    int fd = createSocket();
+    configureSocket(fd);
+    bindSocket(fd,host,port);
+    listenSocket(fd);
     setNonBlocking(fd);
     return fd;
 }
