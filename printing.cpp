@@ -1,4 +1,5 @@
 #include "includes/classes/parsing.hpp"
+#include <iostream>
 
 void printConfig(const parse& p)
 {

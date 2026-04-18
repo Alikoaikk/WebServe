@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 17:08:49 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/18 23:28:06 by msafa            ###   ########.fr       */
+/*   Updated: 2026/04/18 23:40:11 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 // Includes
 
+    # include "../classes/parsing.hpp"
     # include <string>
     # include <iostream>
     # include <fstream>

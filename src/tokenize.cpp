@@ -11,6 +11,9 @@
 /* ************************************************************************** */
 
 #include "../includes/classes/parsing.hpp"
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
 
 std::vector<std::string> tokenize(const std::string &filename)
 {

@@ -5,24 +5,21 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/13 17:08:49 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/18 23:27:52 by msafa            ###   ########.fr       */
+/*   Created: 2026/04/04 21:08:28 by msafa             #+#    #+#             */
+/*   Updated: 2026/04/18 23:34:46 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef IMPORTS_HPP
-#define IMPORTS_HPP
+#ifndef SOCKET_HPP
+#define SOCKET_HPP
 
-// Includes
+#include <string>
 
-    # include <string>
-    # include <iostream>
-    # include <fstream>
-    # include <sstream>
-    # include <map>
-    # include <vector>
-    # include <cstdlib>
-    # include <stdexcept>
-
+class Socket
+{
+    public:
+        static int createListenSocket(const std::string& host, int port);
+        static void setNonBlocking(int fd);
+};
 
 #endif

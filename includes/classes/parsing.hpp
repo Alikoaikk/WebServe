@@ -13,7 +13,10 @@
 #ifndef PARSING_HPP
 #define PARSING_HPP
 
-#include "../headers/imports.hpp"
+#include <string>
+#include <vector>
+#include <map>
+#include <stdexcept>
 
 
 class parse
