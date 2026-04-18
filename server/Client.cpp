@@ -1,28 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   imports.hpp                                        :+:      :+:    :+:   */
+/*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/13 17:08:49 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/18 23:28:06 by msafa            ###   ########.fr       */
+/*   Created: 2026/04/13 18:15:03 by msafa             #+#    #+#             */
+/*   Updated: 2026/04/13 18:30:10 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef IMPORTS_HPP
-#define IMPORTS_HPP
+#include "Client.hpp"
+#include "../http/Request.hpp"
+#include "../http/Response.hpp"
+#include <ctime>
 
-// Includes
+Client::Client(int fd)
+    : fd(fd),state(INBOUND_HEADER),last_activity(time(NULL))
+{
+    request = new Request();
+    response = new Response();
+}
 
-    # include <string>
-    # include <iostream>
-    # include <fstream>
-    # include <sstream>
-    # include <map>
-    # include <vector>
-    # include <cstdlib>
-    # include <stdexcept>
-
-
-#endif
+Client::~Client()
+{
+    delete request;
+    delete response;
+}
