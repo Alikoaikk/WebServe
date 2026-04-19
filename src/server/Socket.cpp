@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Socket.hpp"
+#include "../../includes/classes/Socket.hpp"
 #include <sys/socket.h>
 #include <unistd.h>
 #include <cstring>

@@ -3,85 +3,85 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 00:32:10 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/18 23:39:53 by msafa            ###   ########.fr       */
+/*   Updated: 2026/04/19 06:44:10 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server/Socket.hpp"
-#include "http/Request.hpp"
-#include "http/Response.hpp"
+#include "includes/classes/Socket.hpp"
+#include "includes/classes/Request.hpp"
+#include "includes/classes/Response.hpp"
+#include "includes/classes/parsing.hpp"
+#include "includes/headers/imports.hpp"
 #include <netinet/in.h>
 #include <unistd.h>
-#include <iostream>
-#include "includes/headers/imports.hpp"
 
-// int main(void)
+int main(void)
+{
+    // create listening socket on port 8080
+    int listenFd = Socket::createListenSocket("127.0.0.1", 8080);
+    std::cout << "Server listening on 127.0.0.1:8080" << std::endl;
+
+    while(true)
+    {
+        // wait for one client connection
+        struct sockaddr_in clientAddr;
+        socklen_t addrLen = sizeof(clientAddr);
+        int clientFd = accept(listenFd, (struct sockaddr*)&clientAddr, &addrLen);
+
+        if(clientFd == -1)
+            break;
+
+        // receive data from client
+        char buffer[1024];
+        int bytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
+        buffer[bytesRead] = '\0';
+
+        Request request;
+        std::string chunk(buffer);
+        request.parse(chunk);
+
+        std::cout << "Method: " << request._method << std::endl;
+        std::cout << "URI: " << request._uri << std::endl;
+        std::cout << "Body: " << request._body << std::endl;
+
+        // Create Response
+        Response response;
+        response.setStatusCode(200);
+        response.setHeader("Content-Type", "text/plain");
+        response.setBody("Hello from WebServ!");
+
+        // Build and send response
+        std::string httpResponse = response.build();
+        send(clientFd, httpResponse.c_str(), httpResponse.length(), 0);
+
+        close(clientFd);
+    }
+
+    close(listenFd);
+    return(0);
+}
+
+// int main(int argc, char **argv)
 // {
-//     // create listening socket on port 8080
-//     int listenFd = Socket::createListenSocket("127.0.0.1", 8080);
-//     std::cout << "Server listening on 127.0.0.1:8080" << std::endl;
-
-//     while(true)
+//     if (argc != 2)
 //     {
-//         // wait for one client connection
-//         struct sockaddr_in clientAddr;
-//         socklen_t addrLen = sizeof(clientAddr);
-//         int clientFd = accept(listenFd, (struct sockaddr*)&clientAddr, &addrLen);
-
-//         if(clientFd == -1)
-//             break;
-
-//         // receive data from client
-//         char buffer[1024];
-//         int bytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
-//         buffer[bytesRead] = '\0';
-
-//         Request request;
-//         std::string chunk(buffer);
-//         request.parse(chunk);
-
-//         std::cout << "Method: " << request._method << std::endl;
-//         std::cout << "URI: " << request._uri << std::endl;
-//         std::cout << "Body: " << request._body << std::endl;
-
-//         // Create Response
-//         Response response;
-//         response.setStatusCode(200);
-//         response.setHeader("Content-Type", "text/plain");
-//         response.setBody("Hello from WebServ!");
-
-//         // Build and send response
-//         std::string httpResponse = response.build();
-//         send(clientFd, httpResponse.c_str(), httpResponse.length(), 0);
-
-//         close(clientFd);
+//         std::cerr << "Usage: " << argv[0] << " <config_file>" << std::endl;
+//         return (1);
 //     }
 
-//     close(listenFd);
-//     return(0);
+//     try
+//     {
+//         parse config(argv[1]);
+//         printConfig(config);
+//         // Then start the server loop using the parsed config
+//     }
+//     catch (std::exception &e)
+//     {
+//         std::cerr << "Error: " << e.what() << std::endl;
+//         return (1);
+//     }
+//     return (0);
 // }
-
-int main(int argc, char **argv)
-{
-    if (argc != 2)
-    {
-        std::cerr << "Usage: " << argv[0] << " <config_file>" << std::endl;
-        return (1);
-    }
-    
-    try
-    {
-        parse config(argv[1]);
-        printConfig(config);
-        // Then start the server loop using the parsed config
-    }
-    catch (std::exception &e)
-    {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return (1);
-    }
-    return (0);
-}

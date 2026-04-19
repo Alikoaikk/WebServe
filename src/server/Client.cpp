@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Client.hpp"
-#include "../http/Request.hpp"
-#include "../http/Response.hpp"
+#include "../../includes/classes/Client.hpp"
+#include "../../includes/classes/Request.hpp"
+#include "../../includes/classes/Response.hpp"
 #include <ctime>
 
 Client::Client(int fd)

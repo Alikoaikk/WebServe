@@ -9,9 +9,10 @@ SRCS    = main.cpp \
           src/tokenize.cpp \
           src/servParsing.cpp \
           src/locationParsing.cpp \
-          server/Socket.cpp \
-          http/Request.cpp \
-          http/Response.cpp
+          src/server/Socket.cpp \
+          src/server/Client.cpp \
+          src/http/Request.cpp \
+          src/http/Response.cpp
 
 OBJS    = $(SRCS:.cpp=.o)
 
