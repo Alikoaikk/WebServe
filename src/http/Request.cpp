@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:32:55 by msafa             #+#    #+#             */
-/*   Updated: 2026/04/18 16:35:26 by msafa            ###   ########.fr       */
+/*   Updated: 2026/04/19 19:59:40 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,16 @@ static void parseRequestLine(std::string& rawBuffer, ParseState& parseState, std
         iss >> method;
         iss >> uri;
         iss >> version;
+        if(version != "HTTP/1.0" && version != "HTTP/1.1")
+        {
+            parseState = PARSE_ERROR;
+            return;
+        }
+        if(method != "GET" && method != "POST" && method != "DELETE")
+        {
+            parseState = PARSE_ERROR;
+            return;
+        }
         rawBuffer = rawBuffer.substr(pos + 2);
         parseState = PARSE_HEADERS;
     }
