@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 00:32:10 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/19 06:44:10 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/04/19 21:03:32 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,53 +15,45 @@
 #include "includes/classes/Response.hpp"
 #include "includes/classes/parsing.hpp"
 #include "includes/headers/imports.hpp"
+#include "includes/classes/Client.hpp"
 #include <netinet/in.h>
 #include <unistd.h>
+#include <poll.h>
+#include <vector>
 
 int main(void)
 {
+    //vector of client structs for poll() loop
+    std::vector<Client*> connected_clients;
+    
     // create listening socket on port 8080
     int listenFd = Socket::createListenSocket("127.0.0.1", 8080);
     std::cout << "Server listening on 127.0.0.1:8080" << std::endl;
+    
 
     while(true)
     {
-        // wait for one client connection
-        struct sockaddr_in clientAddr;
-        socklen_t addrLen = sizeof(clientAddr);
-        int clientFd = accept(listenFd, (struct sockaddr*)&clientAddr, &addrLen);
+        //create pollfd vector
+        int numFds =  1 + connected_clients.size();
+        std::vector<struct pollfd> fds(numFds);
 
-        if(clientFd == -1)
-            break;
+        // fill the vector with the listenFd before the clients fds
+        fds[0].fd = listenFd;
+        fds[0].events = POLLIN;
+        fds[0].revents = 0;
 
-        // receive data from client
-        char buffer[1024];
-        int bytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
-        buffer[bytesRead] = '\0';
+        //fill the clients Fds
+        for(size_t i = 0; i < connected_clients.size(); i++)
+        {
+            fds[i + 1].fd = connected_clients[i]->fd;
+            fds[i + 1].events = POLLIN;
+            fds[i + 1].revents = 0;
+        }
 
-        Request request;
-        std::string chunk(buffer);
-        request.parse(chunk);
-
-        std::cout << "Method: " << request._method << std::endl;
-        std::cout << "URI: " << request._uri << std::endl;
-        std::cout << "Body: " << request._body << std::endl;
-
-        // Create Response
-        Response response;
-        response.setStatusCode(200);
-        response.setHeader("Content-Type", "text/plain");
-        response.setBody("Hello from WebServ!");
-
-        // Build and send response
-        std::string httpResponse = response.build();
-        send(clientFd, httpResponse.c_str(), httpResponse.length(), 0);
-
-        close(clientFd);
+        // call poll
+        int pollResult = poll(&fds[0], numFds, -1);
     }
 
-    close(listenFd);
-    return(0);
 }
 
 // int main(int argc, char **argv)
