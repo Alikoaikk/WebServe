@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 00:32:10 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/20 21:12:23 by msafa            ###   ########.fr       */
+/*   Updated: 2026/04/20 21:26:40 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <poll.h>
 #include <vector>
+#include <ctime>
 
 int main(void)
 {
@@ -49,9 +50,18 @@ int main(void)
             fds[i + 1].events = POLLIN;
             fds[i + 1].revents = 0;
         }
-
+        time_t currentTime =  time(NULL);
+        for(size_t i = 0; i < connected_clients.size(); i++)
+        {
+            if(currentTime - connected_clients[i]->last_activity > 30)
+            {
+                delete connected_clients[i];
+                connected_clients.erase(connected_clients.begin() + i);
+                i--;
+            }
+        }
         // call poll
-        int pollResult = poll(&fds[0], numFds, -1);
+        poll(&fds[0], numFds, -1);
         if(fds[0].revents & POLLIN)
         {
             struct sockaddr_in clientAddr;
@@ -75,6 +85,7 @@ int main(void)
             ssize_t bytesReceieved = recv(fds[i + 1].fd,buffer,sizeof(buffer) - 1,0);
             if(bytesReceieved > 0)
             {
+                connected_clients[i]->last_activity = time(NULL);
                 buffer[bytesReceieved] = '\0';
                 std::string chunk(buffer);
                 connected_clients[i]->recv_buffer += chunk;
