@@ -10,10 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+<<<<<<< HEAD
 #include "../../includes/classes/parsing.hpp"
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
+=======
+#include "../../includes/headers/imports.hpp"
+>>>>>>> main
 
 std::vector<std::string> tokenize(const std::string &filename)
 {

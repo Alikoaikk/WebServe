@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/classes/Response.hpp"
-#include <sstream>
+#include "../../includes/headers/imports.hpp"
 
 static std::string getStatusMessage(int code)
 {

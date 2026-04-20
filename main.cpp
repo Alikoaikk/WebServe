@@ -6,21 +6,11 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 00:32:10 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/20 21:26:40 by msafa            ###   ########.fr       */
+/*   Updated: 2026/04/20 21:37:31 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes/classes/Socket.hpp"
-#include "includes/classes/Request.hpp"
-#include "includes/classes/Response.hpp"
-#include "includes/classes/parsing.hpp"
 #include "includes/headers/imports.hpp"
-#include "includes/classes/Client.hpp"
-#include <netinet/in.h>
-#include <unistd.h>
-#include <poll.h>
-#include <vector>
-#include <ctime>
 
 int main(void)
 {
