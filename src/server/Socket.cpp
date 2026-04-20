@@ -10,14 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/classes/Socket.hpp"
-#include <sys/socket.h>
-#include <unistd.h>
-#include <cstring>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <stdexcept>
-#include <fcntl.h>
+#include "../../includes/headers/imports.hpp"
 
 /*
 step 1: create the socket by requesting a fd from the OS to represent the network endpoint

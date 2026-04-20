@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/classes/Request.hpp"
-#include <sstream>
-#include <cstdlib>
+#include "../../includes/headers/imports.hpp"
 
 Request::Request()
     : _parseState(PARSE_REQUEST_LINE), _contentLength(0), _chunked(false)

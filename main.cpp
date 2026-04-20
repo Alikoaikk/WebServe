@@ -10,13 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes/classes/Socket.hpp"
-#include "includes/classes/Request.hpp"
-#include "includes/classes/Response.hpp"
-#include "includes/classes/parsing.hpp"
 #include "includes/headers/imports.hpp"
-#include <netinet/in.h>
-#include <unistd.h>
 
 int main(void)
 {

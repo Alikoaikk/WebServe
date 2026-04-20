@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/classes/Response.hpp"
-#include <sstream>
+#include "../../includes/headers/imports.hpp"
 
 Response::Response()
     :_version("HTTP/1.1"), _statusCode(200),_statusMessage("OK")

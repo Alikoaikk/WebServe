@@ -5,10 +5,10 @@ CXXFLAGS = -g -Wall -Wextra -Werror -std=c++98
 
 SRCS    = main.cpp \
           printing.cpp \
-          src/parsing.cpp \
-          src/tokenize.cpp \
-          src/servParsing.cpp \
-          src/locationParsing.cpp \
+          src/parsing/parsing.cpp \
+          src/parsing/tokenize.cpp \
+          src/parsing/servParsing.cpp \
+          src/parsing/locationParsing.cpp \
           src/server/Socket.cpp \
           src/server/Client.cpp \
           src/http/Request.cpp \

@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/classes/parsing.hpp"
-#include <cstdlib>
+#include "../../includes/headers/imports.hpp"
 
 static void parseMethods
 (

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/classes/parsing.hpp"
+#include "../../includes/headers/imports.hpp"
 
 parse::parse(std::string configFileName)
     : configFileName(configFileName)
