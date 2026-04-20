@@ -3,21 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 15:11:09 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/14 17:24:22 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/04/20 21:39:56 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-<<<<<<< HEAD
-#include "../../includes/classes/parsing.hpp"
-#include <fstream>
-#include <sstream>
-#include <cstdlib>
-=======
 #include "../../includes/headers/imports.hpp"
->>>>>>> main
 
 std::vector<std::string> tokenize(const std::string &filename)
 {

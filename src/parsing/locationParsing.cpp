@@ -3,19 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   locationParsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/15 16:18:53 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/15 16:31:24 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/04/20 21:40:03 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-<<<<<<< HEAD
-#include "../../includes/classes/parsing.hpp"
-#include <cstdlib>
-=======
 #include "../../includes/headers/imports.hpp"
->>>>>>> main
 
 static void parseMethods
 (

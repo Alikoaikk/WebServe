@@ -3,18 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 02:01:45 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/14 22:06:59 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/04/20 21:40:00 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-<<<<<<< HEAD
-#include "../../includes/classes/parsing.hpp"
-=======
 #include "../../includes/headers/imports.hpp"
->>>>>>> main
 
 parse::parse(std::string configFileName)
     : configFileName(configFileName)
