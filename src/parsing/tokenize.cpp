@@ -5,15 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/14 15:11:09 by akoaik            #+#    #+#             */
-/*   Updated: 2026/07/08 23:18:30 by msafa            ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2026/07/08 23:23:28 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/classes/parsing.hpp"
-#include <fstream>
-#include <sstream>
-#include <cstdlib>
+
+#include "../../includes/headers/imports.hpp"
 
 std::vector<std::string> tokenize(const std::string &filename)
 {
