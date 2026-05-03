@@ -1,25 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Socket.hpp                                         :+:      :+:    :+:   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 21:08:28 by msafa             #+#    #+#             */
-/*   Updated: 2026/04/18 23:34:46 by msafa            ###   ########.fr       */
+/*   Updated: 2026/05/03 22:29:09 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SOCKET_HPP
-#define SOCKET_HPP
+#ifndef SERVER_HPP
+#define SERVER_HPP
 
 #include <string>
+#include <vector>
 
-class Socket
+struct Client;
+class parse;
+
+class Server
 {
+    private:
+        int listenFd;
+        parse::serConfig config;
+        void createListenSocket(const std::string& host, int port);
+        void setNonBlocking(int fd);
     public:
-        static int createListenSocket(const std::string& host, int port);
-        static void setNonBlocking(int fd);
+    //OCF
+        Server();
+        Server(const parse::serConfig& cfg);
+        Server(const Server& other);
+        Server& operator=(const Server& other);
+        ~Server();
+    //methods
+        int getListenFd() const;
+        const parse::serConfig& getConfig() const;
+        void acceptNewClient(std::vector<Client*>& clients);
 };
 
 #endif
