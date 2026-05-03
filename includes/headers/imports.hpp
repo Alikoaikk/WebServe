@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 17:08:49 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/20 00:00:00 by msafa            ###   ########.fr       */
+/*   Updated: 2026/05/03 19:26:45 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,9 @@
 # include <poll.h>
 
 // Project class headers
-# include "../classes/parsing.hpp"
-# include "../classes/Socket.hpp"
+# include "../classes/Parsing.hpp"
+# include "../classes/Server.hpp"
+# include "../classes/EventLoop.hpp"
 # include "../classes/Request.hpp"
 # include "../classes/Response.hpp"
 # include "../classes/Client.hpp"
