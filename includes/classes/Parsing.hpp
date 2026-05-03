@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 17:06:11 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/15 16:29:13 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/05/03 19:01:01 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,9 @@ class parse
         }	serConfig ;
 
         std::vector<serConfig>  servers ;
+        parse();
         parse(std::string configFileName);
+        parse& operator=(const parse& rhs);
         void parseTokens(std::vector<std::string> tokens);
         void parseServerBlock(std::vector<std::string>& tokens, size_t& i, serConfig& sc);
 };

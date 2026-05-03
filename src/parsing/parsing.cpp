@@ -6,11 +6,17 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/14 02:01:45 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/20 21:40:00 by msafa            ###   ########.fr       */
+/*   Updated: 2026/05/03 19:01:13 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/headers/imports.hpp"
+
+parse::parse()
+    : configFileName("")
+{
+    // Default constructor - creates empty parse object with no servers loaded
+}
 
 parse::parse(std::string configFileName)
     : configFileName(configFileName)
@@ -19,6 +25,16 @@ parse::parse(std::string configFileName)
 
     tokens = tokenize(configFileName) ;
     parseTokens(tokens) ;
+}
+
+parse& parse::operator=(const parse& rhs)
+{
+    if (this != &rhs)
+    {
+        configFileName = rhs.configFileName;
+        servers = rhs.servers;
+    }
+    return *this;
 }
 
 void parse::parseTokens(std::vector<std::string> tokens)
