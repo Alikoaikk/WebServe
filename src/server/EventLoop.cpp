@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/05/09 16:33:54 by msafa            ###   ########.fr       */
+/*   Updated: 2026/05/09 19:08:21 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,22 @@ void handleClientSend(std::vector<Client*>& connected_clients,std::vector<struct
     }
 }
 
+static const parse::locConfig* findLocation(const parse::serConfig& config, const std::string& uri)
+{
+    const parse::locConfig* winner = NULL;
+    size_t winnerLen = 0;
+    for(size_t i = 0; i < config.locations.size(); i++)
+    {
+        const std::string& locPath = config.locations[i].path;
+        if(uri.find(locPath) == 0 && locPath.length() > winnerLen)
+        {
+            winner = &config.locations[i];
+            winnerLen = locPath.length();
+        }
+    }
+    return winner;
+}
+
 void handleClientData(std::vector<Client*>& connected_clients, std::vector<struct pollfd>& fds, size_t serverCount)
 {
     for (size_t i = 0; i < connected_clients.size(); i++)
@@ -101,11 +117,49 @@ void handleClientData(std::vector<Client*>& connected_clients, std::vector<struc
                 std::string chunk(buffer);
                 connected_clients[i]->recv_buffer += chunk;
                 connected_clients[i]->request->parse(connected_clients[i]->recv_buffer);
+                
                 if (connected_clients[i]->request->_parseState == PARSE_COMPLETE)
                 {
-                    connected_clients[i]->response->setStatusCode(200);
-                    connected_clients[i]->response->setHeader("Content-Type", "text/plain");
-                    connected_clients[i]->response->setBody("OK");
+                    const parse::locConfig* loc = findLocation(*connected_clients[i]->serverConfig,connected_clients[i]->request->_uri);
+                    if(loc == NULL)
+                    {
+                        connected_clients[i]->response->setStatusCode(404);
+                        connected_clients[i]->response->setHeader("Content-Type","text/html");
+                        connected_clients[i]->response->setBody("<html><body><h1>404 Not Found</h1></body></html>");
+                    }
+                    else
+                    {
+                        const std::vector<std::string>& methods = loc->methods;
+                        bool methodAllowed = false;
+                        for(size_t j = 0; j < methods.size(); j++)
+                        {
+                            if(methods[j] == connected_clients[i]->request->_method)
+                            {
+                                methodAllowed = true;
+                                break;
+                            }
+                        }
+                        if(!methodAllowed)
+                        {
+                            connected_clients[i]->response->setStatusCode(405);
+                            connected_clients[i]->response->setHeader("Content-Type","text/html");
+                            connected_clients[i]->response->setBody("<html><body><h1>405 Method Not Allowed</h1></body></html>");          
+                        }
+                        else
+                        {
+                            connected_clients[i]->response->setStatusCode(200);
+                            connected_clients[i]->response->setHeader("Content-Type","text/plain");
+                            connected_clients[i]->response->setBody("OK");
+                        }
+                    }
+                    connected_clients[i]->send_buffer = connected_clients[i]->response->build();
+                    connected_clients[i]->response_ready = true;
+                }
+                else if(connected_clients[i]->request->_parseState == PARSE_ERROR)
+                {
+                    connected_clients[i]->response->setStatusCode(400);
+                    connected_clients[i]->response->setHeader("Content-Type","text/html");
+                    connected_clients[i]->response->setBody("<html><body><h1>400 Bad Request</h1></body></html>");
                     connected_clients[i]->send_buffer = connected_clients[i]->response->build();
                     connected_clients[i]->response_ready = true;
                 }
