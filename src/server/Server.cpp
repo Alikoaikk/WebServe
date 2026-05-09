@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 19:30:00 by msafa             #+#    #+#             */
-/*   Updated: 2026/05/03 22:36:11 by msafa            ###   ########.fr       */
+/*   Updated: 2026/05/09 17:08:33 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,7 @@ void Server::acceptNewClient(std::vector<Client*>& connected_clients)
         try
         {
             Client* client = new Client(clientFd);
+            client->serverConfig = &this->config;
             connected_clients.push_back(client);
         }
         catch (const std::exception& e)
