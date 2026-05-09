@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/05/03 22:39:32 by msafa            ###   ########.fr       */
+/*   Updated: 2026/05/09 16:33:54 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ void buildPollArray(std::vector<struct pollfd>& fds, std::vector<Server*>& serve
     {
         fds[servers.size() + i].fd = connected_clients[i]->fd;
         fds[servers.size() + i].events = POLLIN;
+        if(connected_clients[i]->response_ready && connected_clients[i]->send_buffer.length() > 0)
+            fds[servers.size() + i].events = POLLIN  | POLLOUT;
         fds[servers.size() + i].revents = 0;
     }
 }
@@ -50,6 +52,37 @@ void handleClientDisconnect(std::vector<Client*>& connected_clients, size_t inde
 {
     delete connected_clients[index];
     connected_clients.erase(connected_clients.begin() + index);
+}
+
+void handleClientSend(std::vector<Client*>& connected_clients,std::vector<struct pollfd>& fds,size_t serverCount)
+{
+    for(size_t i = 0; i < connected_clients.size(); i++)
+    {
+        if(serverCount + i >= fds.size())
+            break;
+        if((fds[serverCount + i].revents & POLLOUT) && connected_clients[i]->send_buffer.length() > 0)
+        {
+            ssize_t bytesSent = send(connected_clients[i]->fd,
+                                     connected_clients[i]->send_buffer.c_str(),
+                                     connected_clients[i]->send_buffer.length(),
+                                     0);
+            if(bytesSent > 0)
+            {
+                connected_clients[i]->send_buffer.erase(0,bytesSent);
+                if(connected_clients[i]->send_buffer.length() == 0)
+                {
+                    connected_clients[i]->response_ready = false;
+                    handleClientDisconnect(connected_clients,i);
+                    i--;
+                }
+            }
+            else if(bytesSent < 0)
+            {
+                handleClientDisconnect(connected_clients, i);
+                i--;
+            }
+        }
+    }
 }
 
 void handleClientData(std::vector<Client*>& connected_clients, std::vector<struct pollfd>& fds, size_t serverCount)
@@ -73,16 +106,8 @@ void handleClientData(std::vector<Client*>& connected_clients, std::vector<struc
                     connected_clients[i]->response->setStatusCode(200);
                     connected_clients[i]->response->setHeader("Content-Type", "text/plain");
                     connected_clients[i]->response->setBody("OK");
-                    std::string httpResponse = connected_clients[i]->response->build();
-
-                    ssize_t bytesSent = send(connected_clients[i]->fd,
-                                            httpResponse.c_str(),
-                                            httpResponse.length(),
-                                            0);
-                    if (bytesSent < 0)
-                    {
-                        std::cerr << "send() failed" << std::endl;
-                    }
+                    connected_clients[i]->send_buffer = connected_clients[i]->response->build();
+                    connected_clients[i]->response_ready = true;
                 }
             }
             else if (bytesReceieved == 0 || bytesReceieved == -1)
@@ -109,7 +134,7 @@ void runEventLoop(std::vector<Server*>& servers, std::vector<Client*>& connected
             if (fds[i].revents & POLLIN)
                 servers[i]->acceptNewClient(connected_clients);
         }
-
         handleClientData(connected_clients, fds, servers.size());
+        handleClientSend(connected_clients,fds,servers.size());
     }
 }
