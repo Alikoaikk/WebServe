@@ -9,7 +9,8 @@ SRCS    = main.cpp \
           src/parsing/tokenize.cpp \
           src/parsing/servParsing.cpp \
           src/parsing/locationParsing.cpp \
-          src/server/Socket.cpp \
+          src/server/Server.cpp \
+          src/server/EventLoop.cpp \
           src/server/Client.cpp \
           src/http/Request.cpp \
           src/http/Response.cpp

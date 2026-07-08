@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:01:41 by msafa             #+#    #+#             */
-/*   Updated: 2026/04/13 18:22:32 by msafa            ###   ########.fr       */
+/*   Updated: 2026/05/09 17:04:07 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ struct Client
     Request* request;   // the object that will parse the request
     Response* response; // the object that will build the response
     time_t last_activity; //timestamp for timeout detection
+    bool response_ready; // flag: response is built and waiting to send
+    const parse::serConfig* serverConfig; // points to the server's config that the client is connected to
     Client(int fd);
     ~Client();
 };

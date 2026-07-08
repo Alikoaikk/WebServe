@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/14 15:11:09 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/14 17:24:22 by akoaik           ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2026/07/08 23:23:28 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../../includes/headers/imports.hpp"
 
