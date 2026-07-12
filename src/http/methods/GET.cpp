@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/classes/methods.hpp"
+#include "../../../includes/headers/imports.hpp"
+#include <string>
 #include <sys/stat.h>
 
 std::string createPath(const std::string& _uri, const parse::locConfig& location)
@@ -27,91 +28,123 @@ std::string createPath(const std::string& _uri, const parse::locConfig& location
     return root + remainder;
 }
 
-/*
-    Build a small HTML error response (404, 403, 501, ...).
-*/
-static Response errorResponse(int code, const std::string& message)
-{
-    Response res;
-    res.setStatusCode(code);
-
-    std::ostringstream bodyStream;
-    bodyStream << "<html><body><h1>" << code << " " << message
-               << "</h1></body></html>";
-    std::string body = bodyStream.str();
-
-    std::ostringstream lenStream;
-    lenStream << body.size();
-
-    res.setHeader("Content-Type", "text/html");
-    res.setHeader("Content-Length", lenStream.str());
-    res.setBody(body);
-    return res;
-}
-
-/*
-    Read a file's full content into a std::string (binary-safe).
-*/
 static std::string readFileToString(const std::string& path)
 {
     std::ifstream file(path.c_str(), std::ios::binary);
+	// binary : because the "\r \n" and other special character will be skiped if we read it as text.
     std::stringstream ss;
     ss << file.rdbuf();
     return ss.str();
 }
 
-Response handleGet(const Request& req, const parse::locConfig& loc)
+static Response serveFile
+(
+	std::string&			fullPath,
+	struct stat&			st,
+	const parse::locConfig&	loc,
+	const parse::serConfig&	serv
+)
 {
-    /* 1. Map the URI to a filesystem path. */
-    std::string path = createPath(req._uri, loc);
 
-    /* 2. stat() the path. If it doesn't exist -> 404. */
-    struct stat st;
-    if (stat(path.c_str(), &st) != 0)
-        return errorResponse(404, "Not Found");
-
-    /* 3. If it's a directory: try the index file, else autoindex, else 403. */
     if (S_ISDIR(st.st_mode))
     {
         if (!loc.index.empty())
         {
-            std::string indexPath = path;
-            if (!indexPath.empty() && indexPath[indexPath.size() - 1] != '/')
-                indexPath += "/";
-            indexPath += loc.index;
-
-            if (stat(indexPath.c_str(), &st) == 0 && S_ISREG(st.st_mode))
-                path = indexPath;
+            std::string filePath = fullPath + "/" + loc.index;
+            struct stat st;
+            if (stat(filePath.c_str(), &st) == 0 && S_ISREG(st.st_mode))
+                fullPath = filePath;
             else if (loc.autoindex)
-                return errorResponse(501, "Not Implemented"); /* TODO: autoindex */
+            {
+                Response res;
+                res.setStatusCode(501);
+                return res;
+            }
             else
-                return errorResponse(403, "Forbidden");
+            {
+                Response res;
+                res.setStatusCode(403);
+                return res;
+            }
         }
         else if (loc.autoindex)
-            return errorResponse(501, "Not Implemented"); /* TODO: autoindex */
+        {
+            Response res;
+            res.setStatusCode(501);
+            return res;
+        }
         else
-            return errorResponse(403, "Forbidden");
+        {
+            Response res;
+            res.setStatusCode(403);
+            return res;
+        }
     }
-    /* 3b. Not directory and not regular file (device, fifo, ...) -> refuse. */
     else if (!S_ISREG(st.st_mode))
-        return errorResponse(403, "Forbidden");
-
-    /* 4. Make sure we can actually read it. */
-    if (access(path.c_str(), R_OK) != 0)
-        return errorResponse(403, "Forbidden");
-
-    /* 5. Read the file. */
-    std::string body = readFileToString(path);
-
-    /* 6. Build the 200 OK response. */
+    {
+        Response res;
+        res.setStatusCode(403);
+        return res;
+    }
+    if (access(fullPath.c_str(), R_OK) != 0)
+    {
+        Response res;
+        res.setStatusCode(403);
+        return res;
+    }
+    std::string body = readFileToString(fullPath);
     Response res;
     res.setStatusCode(200);
-    res.setHeader("Content-Type", getMimeType(path));
-
-    std::ostringstream lenStream;
-    lenStream << body.size();
-    res.setHeader("Content-Length", lenStream.str());
-
+    res.setHeader("Content-Type", getMimeType(fullPath));
+    std::ostringstream len;
+    len << body.size();
+    res.setHeader("Content-Length", len.str());
     res.setBody(body);
     return res;
 }
+
+Response handleGet(const Request& req, const parse::serConfig& serv)
+{
+    const parse::locConfig *loc = NULL;
+
+    // Find location
+    for (size_t i = 0 ; i < serv.locations.size() ; i++)
+    {
+        if (req._uri.find(serv.locations[i].path) == 0)
+        {
+            loc = &serv.locations[i];
+            break ;
+        }
+    }
+    if (!loc)
+        return (Response());
+
+    // check redirect
+    if (loc->redirectCode != 0)
+    {
+        Response res ;
+		res.setStatusCode(loc->redirectCode);
+		res.setHeader("Location", loc->redirectUrl);
+		return (res);
+    }
+	else
+	{
+		std::string fullPath = createPath(req._uri, *loc);
+		struct stat st;
+		if (stat(fullPath.c_str(), &st) == -1)
+		{
+			Response res;
+			res.setStatusCode(404);
+			return res;
+		}
+		return serveFile(fullPath, st, *loc, serv);
+	}
+}
+
+/*
+	Most Importent Notes :
+
+		1- stat : is a struct used from stat function
+			it is a system call, that check the validation of a path in the system
+			if it returned -1, so the os couldn't find the path
+*/
