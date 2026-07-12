@@ -28,21 +28,21 @@ enum ParseState
 class Request
 {
     public:
-        std::string _method;
-        std::string _uri;
-        std::string _version;
-        std::map<std::string,std::string> _headers;
-        std::string _body;
-        std::string _queryString;
-        std::string _path;
-        ParseState _parseState;
+        std::string							_method;
+        std::string							_uri;
+        std::string							_version;
+        std::map<std::string,std::string>	_headers;
+        std::string							_body;
+        std::string							_queryString;
+        std::string							_path;
+        ParseState							_parseState;
         Request();
         ~Request();
         void parse(std::string& chunk);
     private:
-        std::string _rawBuffer;
-        size_t _contentLength;
-        bool _chunked;
+        std::string	_rawBuffer;
+        size_t		_contentLength;
+        bool		_chunked;
 };
 
 #endif
