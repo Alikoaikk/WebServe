@@ -13,7 +13,8 @@ SRCS    = main.cpp \
           src/server/EventLoop.cpp \
           src/server/Client.cpp \
           src/http/Request.cpp \
-          src/http/Response.cpp
+          src/http/Response.cpp \
+          src/http/methods/GET.cpp
 
 OBJS    = $(SRCS:.cpp=.o)
 

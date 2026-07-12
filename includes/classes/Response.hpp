@@ -15,15 +15,18 @@
 
 #include <string>
 #include <map>
+#include "parsing.hpp"
+
+class Request;
 
 class Response
 {
     private:
-        std::string _version;
-        int _statusCode;
-        std::string _statusMessage;
+        std::string							_version;
+        int									_statusCode;
+        std::string							_statusMessage;
         std::map<std::string, std::string> _header;
-        std::string _body;
+        std::string							_body;
     public:
         Response();
         ~Response();
@@ -32,6 +35,14 @@ class Response
         void setBody(const std::string& content);
         std::string build();
 };
+
+
+Response handleGet(const Request& req, const parse::serConfig& serv);
+Response handlePost(const Request& req, const parse::serConfig& serv);
+Response handleDelete(const Request& req, const parse::serConfig& serv);
+
+std::string createPath(const std::string& uri, const parse::locConfig& loc);
+std::string getMimeType(const std::string& path);
 
 #endif
 
