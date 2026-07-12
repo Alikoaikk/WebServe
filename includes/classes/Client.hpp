@@ -15,6 +15,7 @@
 
 #include <string>
 #include <ctime>
+#include "Parsing.hpp"
 
 enum ClientState
 {

@@ -41,8 +41,7 @@ static Response serveFile
 (
 	std::string&			fullPath,
 	struct stat&			st,
-	const parse::locConfig&	loc,
-	const parse::serConfig&	serv
+	const parse::locConfig&	loc
 )
 {
 
@@ -95,7 +94,7 @@ static Response serveFile
     std::string body = readFileToString(fullPath);
     Response res;
     res.setStatusCode(200);
-    res.setHeader("Content-Type", getMimeType(fullPath));
+    // res.setHeader("Content-Type", getMimeType(fullPath));
     std::ostringstream len;
     len << body.size();
     res.setHeader("Content-Length", len.str());
@@ -137,7 +136,7 @@ Response handleGet(const Request& req, const parse::serConfig& serv)
 			res.setStatusCode(404);
 			return res;
 		}
-		return serveFile(fullPath, st, *loc, serv);
+		return serveFile(fullPath, st, *loc);
 	}
 }
 
