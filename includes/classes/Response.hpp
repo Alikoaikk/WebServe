@@ -3,21 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:33:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/04/18 20:29:28 by msafa            ###   ########.fr       */
+/*   Updated: 2026/07/14 22:37:38 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
+#include "Parsing.hpp"
 #include <string>
 #include <map>
 #include "Parsing.hpp"
 
 class Request;
+class parse;
 
 class Response
 {
@@ -50,7 +52,7 @@ std::string getMimeType(const std::string& path);
 HTTP Response structure (always the same format):
 
 [Status Line] contains the version + status code+ status message
-[Headers] same as the request 
+[Headers] same as the request
 [Blank Line] \r\n
 [Body] same body
 

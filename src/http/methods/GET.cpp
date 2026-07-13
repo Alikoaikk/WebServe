@@ -6,12 +6,12 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 18:32:41 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/20 18:48:58 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/07/14 22:38:02 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/headers/imports.hpp"
-#include <string>
+#include "../../../includes/classes/serveFile_helper.hpp"
 #include <sys/stat.h>
 
 std::string createPath(const std::string& _uri, const parse::locConfig& location)
@@ -43,43 +43,11 @@ static Response serveFile
 	struct stat&			st,
 	const parse::locConfig&	loc
 )
+static Response serveFile(std::string& fullPath, struct stat& st, const parse::locConfig& loc)
 {
-
     if (S_ISDIR(st.st_mode))
-    {
-        if (!loc.index.empty())
-        {
-            std::string filePath = fullPath + "/" + loc.index;
-            struct stat st;
-            if (stat(filePath.c_str(), &st) == 0 && S_ISREG(st.st_mode))
-                fullPath = filePath;
-            else if (loc.autoindex)
-            {
-                Response res;
-                res.setStatusCode(501);
-                return res;
-            }
-            else
-            {
-                Response res;
-                res.setStatusCode(403);
-                return res;
-            }
-        }
-        else if (loc.autoindex)
-        {
-            Response res;
-            res.setStatusCode(501);
-            return res;
-        }
-        else
-        {
-            Response res;
-            res.setStatusCode(403);
-            return res;
-        }
-    }
-    else if (!S_ISREG(st.st_mode))
+        return handleDirectory(fullPath, loc);
+    if (!S_ISREG(st.st_mode))
     {
         Response res;
         res.setStatusCode(403);
@@ -100,31 +68,30 @@ static Response serveFile
     res.setHeader("Content-Length", len.str());
     res.setBody(body);
     return res;
+    return serveRegularFile(fullPath);
 }
 
 Response handleGet(const Request& req, const parse::serConfig& serv)
 {
-    const parse::locConfig *loc = NULL;
+    const parse::locConfig* loc = NULL;
 
-    // Find location
-    for (size_t i = 0 ; i < serv.locations.size() ; i++)
+    for (size_t i = 0; i < serv.locations.size(); i++)
     {
         if (req._uri.find(serv.locations[i].path) == 0)
         {
             loc = &serv.locations[i];
-            break ;
+            break;
         }
     }
     if (!loc)
         return (Response());
 
-    // check redirect
     if (loc->redirectCode != 0)
     {
-        Response res ;
-		res.setStatusCode(loc->redirectCode);
-		res.setHeader("Location", loc->redirectUrl);
-		return (res);
+        Response res;
+        res.setStatusCode(loc->redirectCode);
+        res.setHeader("Location", loc->redirectUrl);
+        return res;
     }
 	else
 	{
@@ -138,6 +105,16 @@ Response handleGet(const Request& req, const parse::serConfig& serv)
 		}
 		return serveFile(fullPath, st, *loc);
 	}
+
+    std::string fullPath = createPath(req._uri, *loc);
+    struct stat st;
+    if (stat(fullPath.c_str(), &st) == -1)
+    {
+        Response res;
+        res.setStatusCode(404);
+        return res;
+    }
+    return serveFile(fullPath, st, *loc);
 }
 
 /*
@@ -146,4 +123,12 @@ Response handleGet(const Request& req, const parse::serConfig& serv)
 		1- stat : is a struct used from stat function
 			it is a system call, that check the validation of a path in the system
 			if it returned -1, so the os couldn't find the path
+*/
+
+/*
+    missing till now :
+        1.  Method check
+        2.  no location found, should return 404
+        3.  getMimeType, search about it, see where we should
+            use it in the handleget function
 */
