@@ -2,3 +2,6 @@
 webserv
 *.o
 docs/
+
+# Notes and logs
+Daily_notes.txt

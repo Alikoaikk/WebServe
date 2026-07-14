@@ -84,7 +84,27 @@ Response handleGet(const Request& req, const parse::serConfig& serv)
         }
     }
     if (!loc)
-        return (Response());
+    {
+        Response res;
+        res.setStatusCode(404);
+        return res;
+    }
+
+    bool methodAllowed = false;
+    for (size_t i = 0; i < loc->methods.size(); i++)
+    {
+        if (loc->methods[i] == "GET")
+        {
+            methodAllowed = true;
+            break;
+        }
+    }
+    if (!methodAllowed)
+    {
+        Response res;
+        res.setStatusCode(405);
+        return res;
+    }
 
     if (loc->redirectCode != 0)
     {

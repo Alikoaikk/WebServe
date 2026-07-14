@@ -15,7 +15,8 @@ SRCS    = main.cpp \
           src/http/Request.cpp \
           src/http/Response.cpp \
           src/http/methods/GET.cpp \
-          src/http/methods/serveFile_helper.cpp
+          src/http/methods/serveFile_helper.cpp \
+          src/http/methods/mimeType.cpp
 
 OBJS    = $(SRCS:.cpp=.o)
 

@@ -6,7 +6,7 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 21:49:51 by akoaik            #+#    #+#             */
-/*   Updated: 2026/07/13 22:21:31 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/07/14 21:47:50 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ Response serveRegularFile(const std::string& fullPath)
 
     Response res;
     res.setStatusCode(200);
+    res.setHeader("Content-Type", getMimeType(fullPath));
     std::ostringstream len;
     len << body.size();
     res.setHeader("Content-Length", len.str());
