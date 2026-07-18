@@ -6,7 +6,7 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 18:32:41 by akoaik            #+#    #+#             */
-/*   Updated: 2026/07/14 22:38:02 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/07/18 00:00:00 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,22 +28,12 @@ std::string createPath(const std::string& _uri, const parse::locConfig& location
     return root + remainder;
 }
 
-static std::string readFileToString(const std::string& path)
-{
-    std::ifstream file(path.c_str(), std::ios::binary);
-	// binary : because the "\r \n" and other special character will be skiped if we read it as text.
-    std::stringstream ss;
-    ss << file.rdbuf();
-    return ss.str();
-}
-
 static Response serveFile
 (
 	std::string&			fullPath,
 	struct stat&			st,
 	const parse::locConfig&	loc
 )
-static Response serveFile(std::string& fullPath, struct stat& st, const parse::locConfig& loc)
 {
     if (S_ISDIR(st.st_mode))
         return handleDirectory(fullPath, loc);
@@ -53,21 +43,6 @@ static Response serveFile(std::string& fullPath, struct stat& st, const parse::l
         res.setStatusCode(403);
         return res;
     }
-    if (access(fullPath.c_str(), R_OK) != 0)
-    {
-        Response res;
-        res.setStatusCode(403);
-        return res;
-    }
-    std::string body = readFileToString(fullPath);
-    Response res;
-    res.setStatusCode(200);
-    // res.setHeader("Content-Type", getMimeType(fullPath));
-    std::ostringstream len;
-    len << body.size();
-    res.setHeader("Content-Length", len.str());
-    res.setBody(body);
-    return res;
     return serveRegularFile(fullPath);
 }
 
@@ -113,18 +88,6 @@ Response handleGet(const Request& req, const parse::serConfig& serv)
         res.setHeader("Location", loc->redirectUrl);
         return res;
     }
-	else
-	{
-		std::string fullPath = createPath(req._uri, *loc);
-		struct stat st;
-		if (stat(fullPath.c_str(), &st) == -1)
-		{
-			Response res;
-			res.setStatusCode(404);
-			return res;
-		}
-		return serveFile(fullPath, st, *loc);
-	}
 
     std::string fullPath = createPath(req._uri, *loc);
     struct stat st;
@@ -143,12 +106,4 @@ Response handleGet(const Request& req, const parse::serConfig& serv)
 		1- stat : is a struct used from stat function
 			it is a system call, that check the validation of a path in the system
 			if it returned -1, so the os couldn't find the path
-*/
-
-/*
-    missing till now :
-        1.  Method check
-        2.  no location found, should return 404
-        3.  getMimeType, search about it, see where we should
-            use it in the handleget function
 */
