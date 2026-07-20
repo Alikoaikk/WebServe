@@ -6,12 +6,13 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 18:32:41 by akoaik            #+#    #+#             */
-/*   Updated: 2026/07/18 00:00:00 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/07/20 19:01:56 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/headers/imports.hpp"
 #include "../../../includes/classes/serveFile_helper.hpp"
+#include <cstddef>
 #include <sys/stat.h>
 
 std::string createPath(const std::string& _uri, const parse::locConfig& location)
@@ -49,35 +50,24 @@ static Response serveFile
 Response handleGet(const Request& req, const parse::serConfig& serv)
 {
     const parse::locConfig* loc = NULL;
+    size_t bestLen = 0;
+    size_t size;
 
     for (size_t i = 0; i < serv.locations.size(); i++)
     {
-        if (req._uri.find(serv.locations[i].path) == 0)
+        size = serv.locations[i].path.size();
+        if (req._uri.find(serv.locations[i].path) == 0 &&
+            (req._uri.size() == size || req._uri[size] == '/') &&
+            size > bestLen)
         {
             loc = &serv.locations[i];
-            break;
+            bestLen = size;
         }
     }
     if (!loc)
     {
         Response res;
         res.setStatusCode(404);
-        return res;
-    }
-
-    bool methodAllowed = false;
-    for (size_t i = 0; i < loc->methods.size(); i++)
-    {
-        if (loc->methods[i] == "GET")
-        {
-            methodAllowed = true;
-            break;
-        }
-    }
-    if (!methodAllowed)
-    {
-        Response res;
-        res.setStatusCode(405);
         return res;
     }
 
