@@ -6,7 +6,7 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 18:32:41 by akoaik            #+#    #+#             */
-/*   Updated: 2026/07/20 19:01:56 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/07/22 19:05:50 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static Response serveFile
     return serveRegularFile(fullPath);
 }
 
-Response handleGet(const Request& req, const parse::serConfig& serv)
+const parse::locConfig* findLocation(const std::string& uri, const parse::serConfig& serv)
 {
     const parse::locConfig* loc = NULL;
     size_t bestLen = 0;
@@ -56,14 +56,20 @@ Response handleGet(const Request& req, const parse::serConfig& serv)
     for (size_t i = 0; i < serv.locations.size(); i++)
     {
         size = serv.locations[i].path.size();
-        if (req._uri.find(serv.locations[i].path) == 0 &&
-            (req._uri.size() == size || req._uri[size] == '/') &&
+        if (uri.find(serv.locations[i].path) == 0 &&
+            (uri.size() == size || uri[size] == '/') &&
             size > bestLen)
         {
             loc = &serv.locations[i];
             bestLen = size;
         }
     }
+    return loc;
+}
+
+Response handleGet(const Request& req, const parse::serConfig& serv)
+{
+    const parse::locConfig* loc = findLocation(req._uri, serv);
     if (!loc)
     {
         Response res;

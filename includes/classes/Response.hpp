@@ -45,6 +45,7 @@ Response handleDelete(const Request& req, const parse::serConfig& serv);
 
 std::string createPath(const std::string& uri, const parse::locConfig& loc);
 std::string getMimeType(const std::string& path);
+const parse::locConfig* findLocation(const std::string& uri, const parse::serConfig& serv);
 
 #endif
 
