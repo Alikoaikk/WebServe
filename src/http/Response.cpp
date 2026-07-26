@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:33:57 by msafa             #+#    #+#             */
-/*   Updated: 2026/04/19 19:28:12 by msafa            ###   ########.fr       */
+/*   Updated: 2026/07/26 17:47:53 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,9 @@ std::string Response::build()
     {
         result += itr->first + ": " + itr->second + "\r\n";
     }
+    std::ostringstream lenStream;
+    lenStream << _body.length();
+    result += "Content-Length: " + lenStream.str() + "\r\n";
     result += "\r\n";
     result += _body;
     return result;

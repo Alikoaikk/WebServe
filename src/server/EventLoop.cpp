@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/05/09 19:33:31 by msafa            ###   ########.fr       */
+/*   Updated: 2026/07/26 17:25:23 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,20 @@ void handleClientSend(std::vector<Client*>& connected_clients,std::vector<struct
                 if(connected_clients[i]->send_buffer.length() == 0)
                 {
                     connected_clients[i]->response_ready = false;
-                    handleClientDisconnect(connected_clients,i);
-                    i--;
+                    if(connected_clients[i]->keep_alive)
+                    {
+                        delete connected_clients[i]->request;
+                        connected_clients[i]->request = new Request();
+                        delete connected_clients[i]->response;
+                        connected_clients[i]->response = new Response();
+                        connected_clients[i]->recv_buffer.clear();
+                        connected_clients[i]->keep_alive = false;
+                    }
+                    else
+                    {
+                        handleClientDisconnect(connected_clients,i);
+                        i--;
+                    }
                 }
             }
             else if(bytesSent < 0)
@@ -101,11 +113,29 @@ static const parse::locConfig* findLocation(const parse::serConfig& config, cons
     return winner;
 }
 
+static bool shouldKeepAlive(const Request* req)
+{
+    std::map<std::string, std::string>::const_iterator it = req->_headers.find("Connection");
+    std::string connection;
+    if(it != req->_headers.end())
+        connection = it->second;
+    else
+        connection = "";
+    if(req->_version == "HTTP/1.1")
+        return connection != "close";
+    return connection == "keep-alive";
+}
+
 static void buildErrorResponse(Client* client, int code, const std::string& message)
 {
     client->response->setStatusCode(code);
     client->response->setHeader("Content-Type","text/html");
     client->response->setBody("<html><body><h1>" + message + "</h1></body></html>");
+    client->keep_alive = shouldKeepAlive(client->request);
+    if(client->keep_alive)
+        client->response->setHeader("Connection","keep-alive");
+    else
+        client->response->setHeader("Connection","close");
     client->send_buffer = client->response->build();
     client->response_ready = true;
 }
@@ -135,6 +165,11 @@ static void buildResponse(Client* client)
         client->response->setStatusCode(200);
         client->response->setHeader("Content-Type", "text/plain");
         client->response->setBody("OK");
+        client->keep_alive = shouldKeepAlive(client->request);
+        if(client->keep_alive)
+            client->response->setHeader("Connection","keep-alive");
+        else
+            client->response->setHeader("Connection","close");
         client->send_buffer = client->response->build();
         client->response_ready = true;
     }
