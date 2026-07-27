@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:33:57 by msafa             #+#    #+#             */
-/*   Updated: 2026/07/26 17:47:53 by msafa            ###   ########.fr       */
+/*   Updated: 2026/07/27 17:52:56 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,9 @@ void Response::setBody(const std::string& content)
 std::string Response::build()
 {
     std::string result;
-
     std::ostringstream oss;
     oss << _statusCode;
     std::string statusCode = oss.str();
-    
     result += _version 
                 + " " 
                 + statusCode

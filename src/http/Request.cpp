@@ -91,38 +91,38 @@ static void parseBodyContentLength(std::string& rawBuffer, ParseState& parseStat
     }
 }
 
+static bool parseChunkSize(const std::string& hex, unsigned long& ChunkSize)
+{
+    char* end = NULL;
+    ChunkSize = std::strtoul(hex.c_str(), &end, 16);
+    if(end != hex.c_str() + hex.length() || end == hex.c_str())
+        return false;
+    return true;
+}
+
 static void parseBodyChunked(std::string& rawBuffer, ParseState& parseState, std::string& body)
 {
     while(true)
     {
         size_t pos = rawBuffer.find("\r\n");
-        if(pos != std::string::npos)
-        {
-            std::string hex = rawBuffer.substr(0, pos);
-            char *end = NULL;
-            unsigned long chunkSize = std::strtoul(hex.c_str(), &end, 16);
-            if(end != hex.c_str() + hex.length() || end == hex.c_str())
-            {
-                parseState = PARSE_ERROR;
-                return;
-            }
-            if(chunkSize == 0)
-            {
-                parseState = PARSE_COMPLETE;
-                break;
-            }
-            if(chunkSize > 0)
-            {
-                size_t totalNeeded = pos + 2 + chunkSize + 2;
-                if(rawBuffer.size() < totalNeeded)
-                    return;
-                body.append(rawBuffer.substr(pos + 2, chunkSize));
-                rawBuffer = rawBuffer.substr(totalNeeded);
-                continue;
-            }
-        }
-        else
+        if(pos == std::string::npos)
             return;
+        unsigned long chunkSize;
+        if(!parseChunkSize(rawBuffer.substr(0, pos), chunkSize))
+        {
+            parseState = PARSE_ERROR;
+            return;
+        }
+        if(chunkSize == 0)
+        {
+            parseState = PARSE_COMPLETE;
+            return;
+        }
+        size_t totalNeeded = pos + 2 + chunkSize + 2;
+        if(rawBuffer.size() < totalNeeded)
+            return;
+        body.append(rawBuffer.substr(pos + 2, chunkSize));
+        rawBuffer = rawBuffer.substr(totalNeeded);
     }
 }
 
