@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/headers/imports.hpp"
+#include "classes/imports.hpp"
 
 void checkClientTimeouts(std::vector<Client*>& connected_clients)
 {

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/headers/imports.hpp"
+#include "classes/imports.hpp"
 
 static void parseListen(const std::vector<std::string> &tokens, size_t &i,
                         parse::serConfig &sc) {

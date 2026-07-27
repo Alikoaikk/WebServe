@@ -1,0 +1,6 @@
+{
+    "clangd.fallbackFlags": [
+        "-I${workspaceFolder}/includes",
+        "-std=c++98"
+    ]
+}

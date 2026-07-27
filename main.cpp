@@ -6,11 +6,11 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 00:32:10 by akoaik            #+#    #+#             */
-/*   Updated: 2026/07/14 21:47:35 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/07/23 20:44:52 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes/headers/imports.hpp"
+#include "classes/imports.hpp"
 
 static parse loadConfig(int argc, char *argv[])
 {

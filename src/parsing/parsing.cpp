@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 
-#include "../../includes/headers/imports.hpp"
+#include "classes/imports.hpp"
 
 parse::parse()
     : configFileName("")

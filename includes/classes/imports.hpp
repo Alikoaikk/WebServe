@@ -34,11 +34,11 @@
 #include <unistd.h>
 
 // Project class headers
-#include "../classes/Client.hpp"
-#include "../classes/EventLoop.hpp"
-#include "../classes/Parsing.hpp"
-#include "../classes/Request.hpp"
-#include "../classes/Response.hpp"
-#include "../classes/Server.hpp"
+#include "Client.hpp"
+#include "EventLoop.hpp"
+#include "Parsing.hpp"
+#include "Request.hpp"
+#include "Response.hpp"
+#include "Server.hpp"
 
 #endif
