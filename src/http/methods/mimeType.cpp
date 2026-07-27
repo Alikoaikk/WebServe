@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/headers/imports.hpp"
+#include "classes/imports.hpp"
 #include <string>
 
 std::string getMimeType(const std::string& path)

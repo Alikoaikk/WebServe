@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/headers/imports.hpp"
+#include "classes/imports.hpp"
 
 Client::Client(int fd)
     : fd(fd),state(INBOUND_HEADER),last_activity(time(NULL)),

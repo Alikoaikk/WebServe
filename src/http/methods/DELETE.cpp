@@ -6,12 +6,12 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 20:13:30 by akoaik            #+#    #+#             */
-/*   Updated: 2026/07/23 19:32:26 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/07/23 20:43:41 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/headers/imports.hpp"
-#include "../../../includes/classes/serveFile_helper.hpp"
+#include "classes/imports.hpp"
+#include "classes/serveFile_helper.hpp"
 #include <sys/stat.h>
 #include <unistd.h>
 

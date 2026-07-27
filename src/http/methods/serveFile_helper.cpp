@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/headers/imports.hpp"
-#include "../../../includes/classes/serveFile_helper.hpp"
+#include "classes/imports.hpp"
+#include "classes/serveFile_helper.hpp"
 #include <sys/stat.h>
 #include <dirent.h>
 #include <fstream>

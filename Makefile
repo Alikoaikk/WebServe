@@ -1,7 +1,7 @@
 NAME    = webserv
 
 CXX     = c++
-CXXFLAGS = -g -Wall -Wextra -Werror -std=c++98
+CXXFLAGS = -g -Wall -Wextra -Werror -I includes -std=c++98
 
 SRCS    = main.cpp \
           printing.cpp \
