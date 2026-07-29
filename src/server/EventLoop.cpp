@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/07/27 17:56:00 by msafa            ###   ########.fr       */
+/*   Updated: 2026/07/29 18:00:22 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ static void resetClientForNextRequest(Client* client)
     client->request = new Request();
     delete client->response;
     client->response = new Response();
-    client->recv_buffer.clear();
     client->keep_alive = false;
     client->response_ready = false;
 }
@@ -198,9 +197,8 @@ void handleClientData(std::vector<Client*>& connected_clients, std::vector<struc
         if(bytesReceived > 0)
         {
             connected_clients[i]->last_activity = time(NULL);
-            buffer[bytesReceived] = '\0';
-            connected_clients[i]->recv_buffer += std::string(buffer);
-            connected_clients[i]->request->parse(connected_clients[i]->recv_buffer);
+            std::string chunk(buffer,bytesReceived);
+            connected_clients[i]->request->parse(chunk);
             processClientRequest(connected_clients[i]);
         }
         else if(bytesReceived == 0 || bytesReceived == -1)
