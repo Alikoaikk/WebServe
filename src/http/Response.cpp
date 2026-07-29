@@ -6,13 +6,13 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:33:57 by msafa             #+#    #+#             */
-/*   Updated: 2026/07/27 17:52:56 by msafa            ###   ########.fr       */
+/*   Updated: 2026/07/29 19:49:44 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/imports.hpp"
 
-static std::string getStatusMessage(int code)
+std::string Response::getStatusMessage(int code)
 {
     switch (code)
     {
@@ -26,6 +26,8 @@ static std::string getStatusMessage(int code)
         return "Method Not Allowed";
     case 500:
         return "Internal Server Error";
+    case 413:
+        return "Payload Too Large";
     default:
         return "Unknown";
     }
@@ -40,6 +42,11 @@ void Response::setStatusCode(int code)
 {
     _statusCode = code;
     _statusMessage = getStatusMessage(code);
+}
+
+int Response::getStatusCode() const
+{
+    return _statusCode;
 }
 
 void Response::setHeader(const std::string& key, const std::string& value)

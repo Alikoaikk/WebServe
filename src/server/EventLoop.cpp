@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/07/29 18:00:22 by msafa            ###   ########.fr       */
+/*   Updated: 2026/07/29 19:50:59 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,10 @@ static bool shouldKeepAlive(const Request* req)
 
 static void finalizeResponse(Client* client)
 {
-    client->keep_alive = shouldKeepAlive(client->request);
+    if(client->response->getStatusCode() >= 400)
+        client->keep_alive = false;
+    else
+        client->keep_alive = shouldKeepAlive(client->request);
     if(client->keep_alive)
         client->response->setHeader("Connection","keep-alive");
     else
@@ -141,14 +144,17 @@ static void finalizeResponse(Client* client)
     client->response_ready = true;
 }
 
-static void buildErrorResponse(Client* client, int code, const std::string& message)
+static void buildErrorResponse(Client* client, int code)
 {
     client->response->setStatusCode(code);
+    std::string message = client->response->getStatusMessage(code);
+    std::ostringstream oss;
+    oss << code;
+    std::string codeStr = oss.str();
     client->response->setHeader("Content-Type","text/html");
-    client->response->setBody("<html><body><h1>" + message + "</h1></body></html>");
+    client->response->setBody("<html><body><h1>" + codeStr + " " + message + "</h1></body></html>");
     finalizeResponse(client);
 }
-
 
 static bool isMethodAllowed(const parse::locConfig* loc, const std::string& method)
 {
@@ -163,12 +169,12 @@ static void buildResponse(Client* client)
     const parse::locConfig* loc = findLocation(*client->serverConfig, client->request->_uri);
     if(loc == NULL)
     {
-        buildErrorResponse(client,404,"404 Not Found");
+        buildErrorResponse(client,404);
         return;
     }
     if(!isMethodAllowed(loc,client->request->_method))
     {
-        buildErrorResponse(client,405,"405 Method Not Allowed");
+        buildErrorResponse(client,405);
         return;
     }
     client->response->setStatusCode(200);
@@ -177,13 +183,21 @@ static void buildResponse(Client* client)
     finalizeResponse(client);
 }
 
+static bool bodyTooLarge(const Request* req, size_t limit)
+{
+    if(req->_contentLength > limit)
+        return true;
+    if(req->_body.length() > limit)
+        return true;
+    return false;
+}
 
 static void processClientRequest(Client* client)
 {
     if(client->request->_parseState == PARSE_COMPLETE)
         buildResponse(client);
     else if(client->request->_parseState == PARSE_ERROR)
-        buildErrorResponse(client,400,"400 Bad Request");
+        buildErrorResponse(client,400);
 }
 
 void handleClientData(std::vector<Client*>& connected_clients, std::vector<struct pollfd>& fds, size_t serverCount)
@@ -199,7 +213,11 @@ void handleClientData(std::vector<Client*>& connected_clients, std::vector<struc
             connected_clients[i]->last_activity = time(NULL);
             std::string chunk(buffer,bytesReceived);
             connected_clients[i]->request->parse(chunk);
-            processClientRequest(connected_clients[i]);
+            size_t limit = connected_clients[i]->serverConfig->clientMaxBodySize;
+            if(bodyTooLarge(connected_clients[i]->request, limit))
+                buildErrorResponse(connected_clients[i], 413);
+            else
+                processClientRequest(connected_clients[i]);
         }
         else if(bytesReceived == 0 || bytesReceived == -1)
         {
