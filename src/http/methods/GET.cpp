@@ -6,7 +6,7 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 18:32:41 by akoaik            #+#    #+#             */
-/*   Updated: 2026/07/22 19:05:50 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/08/26 10:48:34 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ const parse::locConfig* findLocation(const std::string& uri, const parse::serCon
     return loc;
 }
 
-Response handleGet(const Request& req, const parse::serConfig& serv)
+Response methods::handleGet(const Request& req, const parse::serConfig& serv)
 {
     const parse::locConfig* loc = findLocation(req._uri, serv);
     if (!loc)
