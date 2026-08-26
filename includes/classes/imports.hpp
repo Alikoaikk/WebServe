@@ -6,7 +6,7 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 17:08:49 by akoaik            #+#    #+#             */
-/*   Updated: 2026/04/20 15:38:25 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/08/26 10:48:24 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,6 @@
 #include "Request.hpp"
 #include "Response.hpp"
 #include "Server.hpp"
+#include "methods.hpp"
 
 #endif

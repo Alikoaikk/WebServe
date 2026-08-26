@@ -6,7 +6,7 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 20:13:30 by akoaik            #+#    #+#             */
-/*   Updated: 2026/07/23 20:43:41 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/08/26 10:47:58 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-Response handleDelete(const Request& req, const parse::serConfig& ser)
+Response methods::handleDelete(const Request& req, const parse::serConfig& ser)
 {
     const parse::locConfig* loc = findLocation(req._uri, ser);
     if (!loc)
