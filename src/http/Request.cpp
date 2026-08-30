@@ -42,15 +42,21 @@ static void parseRequestLine(std::string& rawBuffer, ParseState& parseState, std
     }
 }
 
-static void parseHeaderLine(const std::string& headerLine, std::map<std::string, std::string>& headers, size_t& contentLength, bool& chunked)
+static void parseHeaderLine
+(
+    const std::string&                      headerLine,
+    std::map<std::string, std::string>&     headers,
+    size_t&                                 contentLength,
+    bool&                                   chunked
+)
 {
     size_t colonPos = headerLine.find(":");
     if(colonPos != std::string::npos)
     {
         std::string key = headerLine.substr(0, colonPos);
         std::string value = headerLine.substr(colonPos + 1);
-        std::istringstream iss(value);
-        iss >> value;
+        if(!value.empty() && value[0] == ' ')
+            value = value.substr(1);
         headers[key] = value;
         if(key == "Content-Length")
         {
