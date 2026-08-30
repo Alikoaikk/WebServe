@@ -38,9 +38,6 @@ Response buildAutoindex(const std::string& fullPath)
     Response res;
     res.setStatusCode(200);
     res.setHeader("Content-Type", "text/html");
-    std::ostringstream len;
-    len << body.size();
-    res.setHeader("Content-Length", len.str());
     res.setBody(body);
     return res;
 }
@@ -61,9 +58,6 @@ Response serveRegularFile(const std::string& fullPath)
     Response res;
     res.setStatusCode(200);
     res.setHeader("Content-Type", getMimeType(fullPath));
-    std::ostringstream len;
-    len << body.size();
-    res.setHeader("Content-Length", len.str());
     res.setBody(body);
     return res;
 }
