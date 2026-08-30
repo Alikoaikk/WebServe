@@ -16,6 +16,8 @@ SRCS    = main.cpp \
           src/http/Response.cpp \
           src/http/methods/GET.cpp \
           src/http/methods/POST.cpp \
+          src/http/methods/POST_helper.cpp \
+          src/http/methods/parseMultiPart.cpp \
           src/http/methods/DELETE.cpp \
           src/http/methods/serveFile_helper.cpp \
           src/http/methods/mimeType.cpp
