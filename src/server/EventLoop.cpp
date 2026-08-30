@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/07/29 19:50:59 by msafa            ###   ########.fr       */
+/*   Updated: 2026/08/30 16:15:59 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,9 +177,16 @@ static void buildResponse(Client* client)
         buildErrorResponse(client,405);
         return;
     }
-    client->response->setStatusCode(200);
-    client->response->setHeader("Content-Type", "text/plain");
-    client->response->setBody("OK");
+    if(client->request->_method == "GET")
+    {
+        methods m;
+        *client->response = m.handleGet(*client->request, *client->serverConfig);
+    }
+    else if(client->request->_method == "DELETE")
+    {
+        methods m;
+        *client->response = m.handleDelete(*client->request, *client->serverConfig);
+    }
     finalizeResponse(client);
 }
 
