@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 19:30:00 by msafa             #+#    #+#             */
-/*   Updated: 2026/07/27 17:53:30 by msafa            ###   ########.fr       */
+/*   Updated: 2026/09/02 16:12:55 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,7 @@ void Server::acceptNewClient(std::vector<Client*>& connected_clients)
     {
         try
         {
+            setNonBlocking(clientFd);
             Client* client = new Client(clientFd);
             client->serverConfig = &this->config;
             connected_clients.push_back(client);
