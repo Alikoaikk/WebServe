@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/08/30 16:15:59 by msafa            ###   ########.fr       */
+/*   Updated: 2026/09/02 16:48:59 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,11 @@ static void buildResponse(Client* client)
     {
         methods m;
         *client->response = m.handleDelete(*client->request, *client->serverConfig);
+    }
+    else if (client->request->_method == "POST")
+    {
+        methods m;
+        *client->response = m.handlePost(*client->request, *client->serverConfig);
     }
     finalizeResponse(client);
 }
