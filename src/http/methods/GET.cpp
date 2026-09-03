@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GET.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 18:32:41 by akoaik            #+#    #+#             */
-/*   Updated: 2026/08/26 10:48:34 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/09/03 21:41:21 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ const parse::locConfig* findLocation(const std::string& uri, const parse::serCon
     {
         size = serv.locations[i].path.size();
         if (uri.find(serv.locations[i].path) == 0 &&
-            (uri.size() == size || uri[size] == '/') &&
+            (uri.size() == size || uri[size] == '/' || serv.locations[i].path[size - 1] == '/') &&
             size > bestLen)
         {
             loc = &serv.locations[i];
