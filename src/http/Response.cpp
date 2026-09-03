@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:33:57 by msafa             #+#    #+#             */
-/*   Updated: 2026/08/30 15:34:03 by msafa            ###   ########.fr       */
+/*   Updated: 2026/09/03 19:47:14 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,11 @@ void Response::setStatusCode(int code)
 int Response::getStatusCode() const
 {
     return _statusCode;
+}
+
+const std::string& Response::getBody() const
+{
+    return _body;
 }
 
 void Response::setHeader(const std::string& key, const std::string& value)

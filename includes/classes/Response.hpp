@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:33:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/08/24 13:42:00 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/09/03 18:58:49 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class Response
         ~Response();
         void setStatusCode(int code);
         int getStatusCode() const;
+        const std::string& getBody() const;
         std::string getStatusMessage(int code);
         void setHeader(const std::string& key, const std::string& value);
         void setBody(const std::string& content);
