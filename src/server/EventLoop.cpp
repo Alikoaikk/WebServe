@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/09/02 16:48:59 by msafa            ###   ########.fr       */
+/*   Updated: 2026/09/03 20:39:39 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,26 @@ static void finalizeResponse(Client* client)
     client->response_ready = true;
 }
 
+bool tryLoadErrorPage(Client* client, int code, std::string& body)
+{
+    std::map<int, std::string>::const_iterator it = client->serverConfig->errorPages.find(code);
+    if(it != client->serverConfig->errorPages.end())
+    {
+        std::string path = it->second;
+        if(!path.empty() && path[0] == '/')
+            path = path.substr(1);
+        std::ifstream file(path.c_str(), std::ios::binary);
+        if(!file.is_open())
+            return false;
+        std::stringstream ss;
+        ss << file.rdbuf();
+        body = ss.str();
+        return true;
+    }
+    else
+        return false;
+}
+
 static void buildErrorResponse(Client* client, int code)
 {
     client->response->setStatusCode(code);
@@ -152,7 +172,11 @@ static void buildErrorResponse(Client* client, int code)
     oss << code;
     std::string codeStr = oss.str();
     client->response->setHeader("Content-Type","text/html");
-    client->response->setBody("<html><body><h1>" + codeStr + " " + message + "</h1></body></html>");
+    std::string body;
+    if(tryLoadErrorPage(client, code, body))
+        client->response->setBody(body);
+    else
+        client->response->setBody("<html><body><h1>" + codeStr + " " + message + "</h1></body></html>");
     finalizeResponse(client);
 }
 
@@ -192,7 +216,11 @@ static void buildResponse(Client* client)
         methods m;
         *client->response = m.handlePost(*client->request, *client->serverConfig);
     }
-    finalizeResponse(client);
+    int status = client->response->getStatusCode();
+    if(status >= 400 && client->response->getBody().empty())
+        buildErrorResponse(client, status);
+    else
+        finalizeResponse(client);
 }
 
 static bool bodyTooLarge(const Request* req, size_t limit)
