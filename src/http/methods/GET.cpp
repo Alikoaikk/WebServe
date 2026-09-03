@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 18:32:41 by akoaik            #+#    #+#             */
-/*   Updated: 2026/09/03 21:41:21 by msafa            ###   ########.fr       */
+/*   Updated: 2026/09/03 23:31:09 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ std::string createPath(const std::string& _uri, const parse::locConfig& location
     std::string remainder = _uri;
     if (_uri.find(location.path) == 0)
         remainder = _uri.substr(location.path.size());
-
     std::string root = location.root;
     if (!root.empty() && root[root.size() - 1] == '/')
         root = root.substr(0, root.size() - 1);
