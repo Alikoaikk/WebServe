@@ -20,7 +20,9 @@ SRCS    = main.cpp \
           src/http/methods/parseMultiPart.cpp \
           src/http/methods/DELETE.cpp \
           src/http/methods/serveFile_helper.cpp \
-          src/http/methods/mimeType.cpp
+          src/http/methods/mimeType.cpp \
+          src/CGI/needCGI.cpp \
+          src/CGI/cgiBuildResponse.cpp
 
 OBJS    = $(SRCS:.cpp=.o)
 

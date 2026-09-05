@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   locationParsing.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/07/08 23:23:19 by msafa            ###   ########.fr       */
+/*   Created: 2026/07/18 18:14:09 by akoaik            #+#    #+#             */
+/*   Updated: 2026/09/07 11:30:50 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,11 @@ static void parseCgiPass
     i++;
     lc.cgiPass = tokens[i];
     i++;
+    if (i < tokens.size() && tokens[i] != ";")
+    {
+        lc.cgiInterpreter = tokens[i];
+        i++;
+    }
     expectSemicolon(tokens, i);
 }
 
