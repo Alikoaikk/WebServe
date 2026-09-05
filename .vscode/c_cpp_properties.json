@@ -6,9 +6,16 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/includes",
                 "${workspaceFolder}/includes/classes",
-                "${workspaceFolder}/includes/headers"
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/src/http",
+                "${workspaceFolder}/src/http/methods",
+                "${workspaceFolder}/src/parsing",
+                "${workspaceFolder}/src/server",
+                "${workspaceFolder}/src/CGI"
             ],
-            "compilerPath": "/usr/bin/gcc",
+            "defines": [],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "c11",
             "cppStandard": "c++98",
             "intelliSenseMode": "linux-gcc-x64"
         }
