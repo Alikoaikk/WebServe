@@ -1,6 +1,25 @@
 {
-    "clangd.fallbackFlags": [
-        "-I${workspaceFolder}/includes",
-        "-std=c++98"
-    ]
+    "C_Cpp.intelliSenseEngine": "default",
+    "C_Cpp.autocomplete": "default",
+    "C_Cpp.suggestSnippets": true,
+    "C_Cpp.default.cppStandard": "c++98",
+    "C_Cpp.default.compilerPath": "/usr/bin/g++",
+    "[cpp]": {
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": false,
+            "strings": false
+        },
+        "editor.suggestOnTriggerCharacters": true,
+        "editor.acceptSuggestionOnEnter": "on",
+        "editor.wordBasedSuggestions": "matchingDocuments"
+    },
+    "[c]": {
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": false,
+            "strings": false
+        },
+        "editor.acceptSuggestionOnEnter": "on"
+    }
 }
