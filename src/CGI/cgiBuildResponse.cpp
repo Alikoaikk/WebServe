@@ -6,38 +6,38 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/06 21:18:25 by akoaik            #+#    #+#             */
-/*   Updated: 2026/09/06 21:50:50 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/09/07 15:52:48 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/imports.hpp"
+#include <sys/wait.h>
+
+static void buildEnv
+(
+    std::vector<std::string>&	env,
+    const Request&				req,
+    const std::string&			fullPath
+)
+{
+    std::ostringstream oss;
+    oss << req._body.size();
+
+    env.push_back("REQUEST_METHOD=" + req._method);
+    env.push_back("QUERY_STRING=" + req._queryString);
+    env.push_back("CONTENT_LENGTH=" + oss.str());
+    env.push_back("SCRIPT_FILENAME=" + fullPath);
+    env.push_back("PATH_INFO=");
+    env.push_back("GATEWAY_INTERFACE=CGI/1.1");
+    env.push_back("SERVER_PROTOCOL=HTTP/1.1");
+}
 
 Response cgiBuildResponse(const Request& req, const parse::locConfig& loc, const std::string& fullPath)
 {
     Response res;
 
-    
+    std::vector<std::string> env;
+    buildEnv(env, req, fullPath);
 
     return res;
 }
-
-
-/*
-     Runs the CGI script at `fullPath` and turns its output into a Response.
-
-     Steps to implement (fill in the bodies below):
-       1. Build the CGI environment (char** envp):
-            REQUEST_METHOD, CONTENT_LENGTH, CONTENT_TYPE, QUERY_STRING,
-            SCRIPT_FILENAME (= fullPath), PATH_INFO,
-            GATEWAY_INTERFACE=CGI/1.1, SERVER_PROTOCOL=HTTP/1.1
-       2. Create two pipes: one for the child's stdin (request body),
-          one for the child's stdout (CGI output).
-       3. fork().
-            - child : dup2 the pipes onto STDIN/STDOUT, chdir into the
-                      script's directory, execve(interpreter, args, envp).
-            - parent: write req body to child stdin, close it (EOF = end of
-                      body), read child stdout until EOF.
-       4. waitpid the child.
-       5. Parse CGI output: headers, blank line (\r\n\r\n), then body.
-          Feed headers into the Response, the rest into the body.
-*/

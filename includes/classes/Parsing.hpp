@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing.hpp                                        :+:      :+:    :+:   */
+/*   Parsing.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 17:06:11 by akoaik            #+#    #+#             */
-/*   Updated: 2026/05/03 19:01:01 by msafa            ###   ########.fr       */
+/*   Updated: 2026/09/07 11:26:47 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class parse
             std::string                 uploadStore ;
             std::string                 redirectUrl ;
             std::string                 cgiPass ;
+            std::string					cgiInterpreter ;
         }	locConfig ;
         typedef struct serverConfig
         {
