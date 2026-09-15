@@ -6,7 +6,7 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/06 21:18:25 by akoaik            #+#    #+#             */
-/*   Updated: 2026/09/13 01:40:56 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/09/15 23:31:00 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,15 @@ static void buildEnv
     env.push_back("SERVER_PROTOCOL=HTTP/1.1");
 }
 
+static std::string getInterpreter(const parse::locConfig& loc)
+{
+    if (loc.cgiPass == ".py")
+        return "/usr/bin/python3";
+    if (loc.cgiPass == ".php")
+        return "/usr/bin/php-cgi";
+    return "";
+}
+
 Response cgiBuildResponse(const Request& req, const parse::locConfig& loc, const std::string& fullPath)
 {
     Response res;
@@ -47,7 +56,7 @@ Response cgiBuildResponse(const Request& req, const parse::locConfig& loc, const
         res.setStatusCode(500);
         return res ;
     }
-    if (pipe(outPipe) == -1)
+    if(pipe(outPipe) == -1)
     {
         close(inPipe[0]);
         close(inPipe[1]);
@@ -67,7 +76,7 @@ Response cgiBuildResponse(const Request& req, const parse::locConfig& loc, const
 	}
 	else if (pid == 0)
 	{
-		dup2(inPipe[0], 0);
+    	dup2(inPipe[0], 0);
 		dup2(outPipe[1], 1);
 
 		close(inPipe[0]);
@@ -75,48 +84,60 @@ Response cgiBuildResponse(const Request& req, const parse::locConfig& loc, const
 		close(outPipe[0]);
 		close(outPipe[1]);
 
-		/*
+		std::string interpreter = getInterpreter(loc);
+		std::string script = fullPath;
 
-		 	   std::string dir = fullPath;
-       79 +    std::string script = fullPath;
-       80 +    size_t slash = fullPath.find_last_of('/');
-       81 +    if (slash != std::string::npos)
-       82 +    {
-       83 +      dir = fullPath.substr(0, slash);
-       84 +      script = fullPath.substr(slash + 1);
-       85 +      chdir(dir.c_str());
-       86 +    }
-       87 +
-       88 +    std::string interpreter;
-       89 +    if (loc.cgiPass == ".py")
-       90 +      interpreter = "/usr/bin/python3";
-       91 +    else if (loc.cgiPass == ".php")
-       92 +      interpreter = "/usr/bin/php-cgi";
-       93 +
-       94 +    char* argv[3];
-       95 +    argv[0] = const_cast<char*>(interpreter.c_str());
-       96 +    argv[1] = const_cast<char*>(script.c_str());
-       97 +    argv[2] = NULL;
-       98 +
-       99 +    std::vector<char*> envp;
-      100 +    for (size_t i = 0; i < env.size(); ++i)
-      101 +      envp.push_back(const_cast<char*>(env[i].c_str()));
-      102 +    envp.push_back(NULL);
-      103 +
-      104 +    execve(argv[0], argv, &envp[0]);
-      103 +
-      104 +    execve(argv[0], argv, &envp[0]);
-      105 +    exit(1);
+		size_t slash = fullPath.find_last_of('/');
+		if(slash != std::string::npos)
+		{
+			chdir(fullPath.substr(0, slash).c_str());  // cd into the dir (part before the last '/')
+			script = fullPath.substr(slash + 1);       // keep only the filename (part after the '/')
+		}
 
-		*/
 	}
 	else
 	{
 
-	}
+    }
 
 
 
 
     return res;
 }
+
+
+/*
+
+        std::string dir = fullPath;
+79 +    std::string script = fullPath;
+80 +    size_t slash = fullPath.find_last_of('/');
+81 +    if (slash != std::string::npos)
+82 +    {
+83 +      dir = fullPath.substr(0, slash);
+84 +      script = fullPath.substr(slash + 1);
+85 +      chdir(dir.c_str());
+86 +    }
+87 +
+88 +    std::string interpreter;
+89 +    if (loc.cgiPass == ".py")
+90 +      interpreter = "/usr/bin/python3";
+91 +    else if (loc.cgiPass == ".php")
+92 +      interpreter = "/usr/bin/php-cgi";
+93 +
+94 +    char* argv[3];
+95 +    argv[0] = const_cast<char*>(interpreter.c_str());
+96 +    argv[1] = const_cast<char*>(script.c_str());
+97 +    argv[2] = NULL;
+98 +
+99 +    std::vector<char*> envp;
+100 +    for (size_t i = 0; i < env.size(); ++i)
+101 +      envp.push_back(const_cast<char*>(env[i].c_str()));
+102 +    envp.push_back(NULL);
+103 +
+104 +    execve(argv[0], argv, &envp[0]);
+103 +
+104 +    execve(argv[0], argv, &envp[0]);
+105 +    exit(1);
+
+*/
