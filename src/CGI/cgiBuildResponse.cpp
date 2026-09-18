@@ -41,6 +41,47 @@ static std::string getInterpreter(const parse::locConfig& loc)
     return "";
 }
 
+static int runCgiChild
+(
+	int					pid,
+	int					inPipe[2],
+	int					outPipe[2],
+	const std::string&	body,
+	std::string&		output
+)
+{
+	// the parent only writes to inPipe and reads from outPipe,
+	// so it must drop the ends the child owns. if it keeps them,
+	// nobody ever sees EOF and both sides block forever.
+	close(inPipe[0]);
+	close(outPipe[1]);
+
+	// send the request body to the script's stdin.
+	// write() can be partial, so resume from where it stopped.
+	size_t written = 0;
+	while (written < body.size())
+	{
+		ssize_t n = write(inPipe[1], body.c_str() + written,
+									 body.size() - written);
+		if (n <= 0)
+			break;
+		written += n;
+	}
+	close(inPipe[1]); // this close is the EOF that ends the script's stdin
+
+	// collect everything the script printed, until EOF
+	char	buf[4096];
+	ssize_t	n;
+	while ((n = read(outPipe[0], buf, sizeof(buf))) > 0)
+		output.append(buf, n);
+	close(outPipe[0]);
+
+	// reap the child so it does not stay a zombie
+	int status = 0;
+	waitpid(pid, &status, 0);
+	return status;
+}
+
 Response cgiBuildResponse(const Request& req, const parse::locConfig& loc, const std::string& fullPath)
 {
     Response res;
@@ -90,15 +131,25 @@ Response cgiBuildResponse(const Request& req, const parse::locConfig& loc, const
 		size_t slash = fullPath.find_last_of('/');
 		if(slash != std::string::npos)
 		{
-			chdir(fullPath.substr(0, slash).c_str());  // cd into the dir (part before the last '/')
-			script = fullPath.substr(slash + 1);       // keep only the filename (part after the '/')
+			chdir(fullPath.substr(0, slash).c_str());
+			script = fullPath.substr(slash + 1);
 		}
 
 	}
 	else
 	{
+		std::string output;
+		int status = runCgiChild(pid, inPipe, outPipe, req._body, output);
 
-    }
+		if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		{
+			res.setStatusCode(500);
+			return res;
+		}
+
+		res.setStatusCode(200);
+		res.setBody(output);
+	}
 
 
 
