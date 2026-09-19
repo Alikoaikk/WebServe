@@ -6,7 +6,7 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/06 21:18:25 by akoaik            #+#    #+#             */
-/*   Updated: 2026/09/15 23:31:00 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/09/19 02:10:26 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,34 +50,23 @@ static int runCgiChild
 	std::string&		output
 )
 {
-	// the parent only writes to inPipe and reads from outPipe,
-	// so it must drop the ends the child owns. if it keeps them,
-	// nobody ever sees EOF and both sides block forever.
 	close(inPipe[0]);
 	close(outPipe[1]);
 
-	// send the request body to the script's stdin.
-	// write() can be partial, so resume from where it stopped.
-	size_t written = 0;
-	while (written < body.size())
-	{
-		ssize_t n = write(inPipe[1], body.c_str() + written,
-									 body.size() - written);
-		if (n <= 0)
-			break;
-		written += n;
-	}
-	close(inPipe[1]); // this close is the EOF that ends the script's stdin
+	if (!body.empty())
+		write(inPipe[1], body.c_str(), body.size());
+	close(inPipe[1]);
 
-	// collect everything the script printed, until EOF
-	char	buf[4096];
-	ssize_t	n;
-	while ((n = read(outPipe[0], buf, sizeof(buf))) > 0)
+	char buf[4096];
+	ssize_t n = read(outPipe[0], buf, sizeof(buf));
+	while (n > 0)
+	{
 		output.append(buf, n);
+		n = read(outPipe[0], buf, sizeof(buf));
+	}
 	close(outPipe[0]);
 
-	// reap the child so it does not stay a zombie
-	int status = 0;
+	int status;
 	waitpid(pid, &status, 0);
 	return status;
 }
@@ -146,17 +135,11 @@ Response cgiBuildResponse(const Request& req, const parse::locConfig& loc, const
 			res.setStatusCode(500);
 			return res;
 		}
-
 		res.setStatusCode(200);
 		res.setBody(output);
 	}
-
-
-
-
     return res;
 }
-
 
 /*
 
