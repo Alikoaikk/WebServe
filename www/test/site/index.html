@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webserv — Test Home</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="card">
+        <h1>🚀 Webserv Test Site</h1>
+        <p>If you can read this, <strong>GET</strong> on the root location works.</p>
+        <ul>
+            <li><a href="/about.html">About page</a> (another static GET)</li>
+            <li><a href="/static/">/static/</a> (directory autoindex)</li>
+            <li><a href="/uploads/">/uploads/</a> (upload area, autoindex)</li>
+            <li><a href="/old">/old</a> (301 redirect → /)</li>
+            <li><a href="/cgi-bin/hello.py">/cgi-bin/hello.py</a> (CGI)</li>
+            <li><a href="/cgi-bin/env.py?name=webserv">/cgi-bin/env.py?name=webserv</a> (CGI + query string)</li>
+            <li><a href="/cgi-bin/form.html">/cgi-bin/form.html</a> (POST to CGI)</li>
+        </ul>
+    </div>
+</body>
+</html>
