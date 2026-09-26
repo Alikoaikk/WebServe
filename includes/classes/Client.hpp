@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:01:41 by msafa             #+#    #+#             */
-/*   Updated: 2026/07/29 17:54:14 by msafa            ###   ########.fr       */
+/*   Updated: 2026/09/26 21:57:09 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ struct Client
     bool response_ready; // flag: response is built and waiting to send
     bool keep_alive; //flag: reuse this connection after the current response is sent
     const parse::serConfig* serverConfig; // points to the server's config that the client is connected to
+    cgi_process *cgi ;  // ali : pointer to connect to each client runing CGI
     Client(int fd);
     ~Client();
 };

@@ -6,14 +6,16 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/26 18:31:56 by akoaik            #+#    #+#             */
-/*   Updated: 2026/09/26 18:52:19 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/09/26 21:41:02 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CGI_hpp
 #define CGI_HPP
 
-
+#include <string>
+#include <ctime>
+#include <sys/types.h>
 
 typedef struct cgi
 {
@@ -28,9 +30,6 @@ typedef struct cgi
 
     cgi_process()
         : pid(-1), inFd(-1), outFd(-1), startTime(0), done(false)
-    {}
-
-    ~cgi_process()
     {}
 } cgi_process ;
 
