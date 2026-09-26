@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>CGI POST form</title></head>
+<body>
+    <h1>POST to a CGI script</h1>
+    <form action="/cgi-bin/form.py" method="POST">
+        <p><label>Name: <input type="text" name="name" value="webserv"></label></p>
+        <p><label>Message: <input type="text" name="message" value="hello cgi"></label></p>
+        <button type="submit">Send POST</button>
+    </form>
+    <p><a href="/">home</a></p>
+</body>
+</html>

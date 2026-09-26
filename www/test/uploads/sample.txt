@@ -1,0 +1,2 @@
+Pre-existing file in the upload area so /uploads/ has something to list
+and so you have a target to DELETE.
