@@ -6,7 +6,7 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 17:08:49 by akoaik            #+#    #+#             */
-/*   Updated: 2026/08/26 10:48:24 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/09/26 21:41:59 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 #include <unistd.h>
 
 // Project class headers
+#include "cgi.hpp"
 #include "Client.hpp"
 #include "ClientIO.hpp"
 #include "EventLoop.hpp"
