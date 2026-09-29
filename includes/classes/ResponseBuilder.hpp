@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   EventLoop.hpp                                      :+:      :+:    :+:   */
+/*   ResponseBuilder.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,14 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EVENTLOOP_HPP
-#define EVENTLOOP_HPP
-
-#include <vector>
+#ifndef RESPONSEBUILDER_HPP
+#define RESPONSEBUILDER_HPP
 
 struct Client;
-class Server;
 
-void runEventLoop(std::vector<Server*>& servers, std::vector<Client*>& connected_clients);
+void processClientRequest(Client* client);
 
 #endif

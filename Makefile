@@ -10,10 +10,13 @@ SRCS    = main.cpp \
           src/parsing/servParsing.cpp \
           src/parsing/locationParsing.cpp \
           src/server/Server.cpp \
+          src/server/socketUtils.cpp \
           src/server/EventLoop.cpp \
+          src/server/ClientIO.cpp \
           src/server/Client.cpp \
           src/http/Request.cpp \
           src/http/Response.cpp \
+          src/http/ResponseBuilder.cpp \
           src/http/methods/GET.cpp \
           src/http/methods/POST.cpp \
           src/http/methods/POST_helper.cpp \

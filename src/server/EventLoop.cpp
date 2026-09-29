@@ -3,30 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   EventLoop.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/09/23 01:26:05 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/09/29 18:58:24 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/imports.hpp"
 
-void checkClientTimeouts(std::vector<Client*>& connected_clients)
+static void checkClientTimeouts(std::vector<Client*>& connected_clients)
 {
     time_t currentTime = time(NULL);
     for (size_t i = 0; i < connected_clients.size(); i++)
     {
         if (currentTime - connected_clients[i]->last_activity > 75)
         {
-            delete connected_clients[i];
-            connected_clients.erase(connected_clients.begin() + i);
+            handleClientDisconnect(connected_clients, i);
             i--;
         }
     }
 }
 
-void buildPollArray(std::vector<struct pollfd>& fds, std::vector<Server*>& servers, std::vector<Client*>& connected_clients)
+static void buildPollArray(std::vector<struct pollfd>& fds, std::vector<Server*>& servers, std::vector<Client*>& connected_clients)
 {
     fds.clear();
     fds.resize(servers.size() + connected_clients.size());
@@ -48,229 +47,12 @@ void buildPollArray(std::vector<struct pollfd>& fds, std::vector<Server*>& serve
     }
 }
 
-void handleClientDisconnect(std::vector<Client*>& connected_clients, size_t index)
+static void acceptNewClients(std::vector<Server*>& servers, std::vector<struct pollfd>& fds, std::vector<Client*>& connected_clients)
 {
-    delete connected_clients[index];
-    connected_clients.erase(connected_clients.begin() + index);
-}
-
-static void resetClientForNextRequest(Client* client)
-{
-    delete client->request;
-    client->request = new Request();
-    delete client->response;
-    client->response = new Response();
-    client->keep_alive = false;
-    client->response_ready = false;
-}
-
-static bool finishSend(std::vector<Client*>& clients, size_t i)
-{
-    if(clients[i]->keep_alive)
+    for (size_t i = 0; i < servers.size(); i++)
     {
-        resetClientForNextRequest(clients[i]);
-        return false;
-    }
-    handleClientDisconnect(clients,i);
-    return true;
-}
-
-void handleClientSend(std::vector<Client*>& connected_clients,std::vector<struct pollfd>& fds,size_t serverCount)
-{
-    for(size_t i = 0; i < connected_clients.size(); i++)
-    {
-        if(serverCount + i >= fds.size())
-            break;
-        if(!((fds[serverCount + i].revents & POLLOUT) && connected_clients[i]->send_buffer.length() > 0))
-            continue;
-        ssize_t bytesSent = send(connected_clients[i]->fd,
-                                 connected_clients[i]->send_buffer.c_str(),
-                                 connected_clients[i]->send_buffer.length(),0);
-        if(bytesSent < 0)
-        {
-            handleClientDisconnect(connected_clients,i);
-            i--;
-            continue;
-        }
-        connected_clients[i]->send_buffer.erase(0,bytesSent);
-        if(connected_clients[i]->send_buffer.empty())
-        {
-            if(finishSend(connected_clients,i))
-                i--;
-        }
-    }
-}
-
-static const parse::locConfig* findLocation(const parse::serConfig& config, const std::string& uri)
-{
-    const parse::locConfig* winner = NULL;
-    size_t winnerLen = 0;
-    for(size_t i = 0; i < config.locations.size(); i++)
-    {
-        const std::string& locPath = config.locations[i].path;
-        if(uri.find(locPath) == 0 && locPath.length() > winnerLen)
-        {
-            winner = &config.locations[i];
-            winnerLen = locPath.length();
-        }
-    }
-    return winner;
-}
-
-static bool shouldKeepAlive(const Request* req)
-{
-    std::map<std::string, std::string>::const_iterator it = req->_headers.find("Connection");
-    std::string connection;
-    if(it != req->_headers.end())
-        connection = it->second;
-    else
-        connection = "";
-    if(req->_version == "HTTP/1.1")
-        return connection != "close";
-    return connection == "keep-alive";
-}
-
-static void finalizeResponse(Client* client)
-{
-    if(client->response->getStatusCode() >= 400)
-        client->keep_alive = false;
-    else
-        client->keep_alive = shouldKeepAlive(client->request);
-    if(client->keep_alive)
-        client->response->setHeader("Connection","keep-alive");
-    else
-        client->response->setHeader("Connection","close");
-    client->send_buffer = client->response->build();
-    client->response_ready = true;
-}
-
-bool tryLoadErrorPage(Client* client, int code, std::string& body)
-{
-    std::map<int, std::string>::const_iterator it = client->serverConfig->errorPages.find(code);
-    if(it != client->serverConfig->errorPages.end())
-    {
-        std::string path = it->second;
-        if(!path.empty() && path[0] == '/')
-            path = path.substr(1);
-        std::ifstream file(path.c_str(), std::ios::binary);
-        if(!file.is_open())
-            return false;
-        std::stringstream ss;
-        ss << file.rdbuf();
-        body = ss.str();
-        return true;
-    }
-    else
-        return false;
-}
-
-static void buildErrorResponse(Client* client, int code)
-{
-    client->response->setStatusCode(code);
-    std::string message = client->response->getStatusMessage(code);
-    std::ostringstream oss;
-    oss << code;
-    std::string codeStr = oss.str();
-    client->response->setHeader("Content-Type","text/html");
-    std::string body;
-    if(tryLoadErrorPage(client, code, body))
-        client->response->setBody(body);
-    else
-        client->response->setBody("<html><body><h1>" + codeStr + " " + message + "</h1></body></html>");
-    finalizeResponse(client);
-}
-
-static bool isMethodAllowed(const parse::locConfig* loc, const std::string& method)
-{
-    for(size_t j = 0; j < loc->methods.size(); j++)
-        if(loc->methods[j] == method)
-            return true;
-    return false;
-}
-
-static void buildResponse(Client* client)
-{
-    const parse::locConfig* loc = findLocation(*client->serverConfig, client->request->_uri);
-    if(loc == NULL)
-    {
-        buildErrorResponse(client,404);
-        return;
-    }
-    if(!isMethodAllowed(loc,client->request->_method))
-    {
-        buildErrorResponse(client,405);
-        return;
-    }
-    // CGI ------
-    std::string fullPath = createPath(client->request->_uri, *loc);
-    if (needsCgi(fullPath, *loc))
-    {
-        *client->response = cgiBuildResponse(*client->request, *loc, fullPath);
-    }
-    // ------
-    else if(client->request->_method == "GET")
-    {
-        methods m;
-        *client->response = m.handleGet(*client->request, *client->serverConfig);
-    }
-    else if(client->request->_method == "DELETE")
-    {
-        methods m;
-        *client->response = m.handleDelete(*client->request, *client->serverConfig);
-    }
-    else if (client->request->_method == "POST")
-    {
-        methods m;
-        *client->response = m.handlePost(*client->request, *client->serverConfig);
-    }
-    int status = client->response->getStatusCode();
-    if(status >= 400 && client->response->getBody().empty())
-        buildErrorResponse(client, status);
-    else
-        finalizeResponse(client);
-}
-
-static bool bodyTooLarge(const Request* req, size_t limit)
-{
-    if(req->_contentLength > limit)
-        return true;
-    if(req->_body.length() > limit)
-        return true;
-    return false;
-}
-
-static void processClientRequest(Client* client)
-{
-    if(client->request->_parseState == PARSE_COMPLETE)
-        buildResponse(client);
-    else if(client->request->_parseState == PARSE_ERROR)
-        buildErrorResponse(client,400);
-}
-
-void handleClientData(std::vector<Client*>& connected_clients, std::vector<struct pollfd>& fds, size_t serverCount)
-{
-    for(size_t i = 0; i < connected_clients.size(); i++)
-    {
-        if(!(fds[serverCount + i].revents & POLLIN))
-            continue;
-        char buffer[1024];
-        ssize_t bytesReceived = recv(fds[serverCount + i].fd, buffer, sizeof(buffer) - 1,0);
-        if(bytesReceived > 0)
-        {
-            connected_clients[i]->last_activity = time(NULL);
-            std::string chunk(buffer,bytesReceived);
-            connected_clients[i]->request->parse(chunk);
-            size_t limit = connected_clients[i]->serverConfig->clientMaxBodySize;
-            if(bodyTooLarge(connected_clients[i]->request, limit))
-                buildErrorResponse(connected_clients[i], 413);
-            else
-                processClientRequest(connected_clients[i]);
-        }
-        else if(bytesReceived == 0 || bytesReceived == -1)
-        {
-            handleClientDisconnect(connected_clients,i);
-            i--;
-        }
+        if (fds[i].revents & POLLIN)
+            servers[i]->acceptNewClient(connected_clients);
     }
 }
 
@@ -283,13 +65,8 @@ void runEventLoop(std::vector<Server*>& servers, std::vector<Client*>& connected
         checkClientTimeouts(connected_clients);
         buildPollArray(fds, servers, connected_clients);
         poll(&fds[0], fds.size(), 5000);
-
-        for(size_t i = 0; i < servers.size(); i++)
-        {
-            if (fds[i].revents & POLLIN)
-                servers[i]->acceptNewClient(connected_clients);
-        }
+        acceptNewClients(servers, fds, connected_clients);
         handleClientData(connected_clients, fds, servers.size());
-        handleClientSend(connected_clients,fds,servers.size());
+        handleClientSend(connected_clients, fds, servers.size());
     }
 }
