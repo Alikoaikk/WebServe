@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   EventLoop.hpp                                      :+:      :+:    :+:   */
+/*   socketUtils.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/03 22:35:23 by msafa             #+#    #+#             */
-/*   Updated: 2026/05/09 15:46:05 by msafa            ###   ########.fr       */
+/*   Created: 2026/09/29 20:17:49 by msafa             #+#    #+#             */
+/*   Updated: 2026/09/29 20:17:50 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EVENTLOOP_HPP
-#define EVENTLOOP_HPP
 
-#include <vector>
+#ifndef SOCKETUTILS_HPP
+#define SOCKETUTILS_HPP
 
-struct Client;
-class Server;
+#include <string>
 
-void runEventLoop(std::vector<Server*>& servers, std::vector<Client*>& connected_clients);
+int     createSocket();
+void    configureSocket(int fd);
+void    bindSocket(int fd, const std::string& host, int port);
+void    listenSocket(int fd);
+void    setNonBlocking(int fd);
 
 #endif

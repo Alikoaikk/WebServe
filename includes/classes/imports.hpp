@@ -35,11 +35,14 @@
 
 // Project class headers
 #include "Client.hpp"
+#include "ClientIO.hpp"
 #include "EventLoop.hpp"
 #include "Parsing.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
+#include "ResponseBuilder.hpp"
 #include "Server.hpp"
+#include "socketUtils.hpp"
 #include "methods.hpp"
 
 #endif

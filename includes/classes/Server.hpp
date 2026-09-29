@@ -25,13 +25,12 @@ class Server
         int listenFd;
         parse::serConfig config;
         void createListenSocket(const std::string& host, int port);
-        void setNonBlocking(int fd);
+        Server(const Server& other);
+        Server& operator=(const Server& other);
     public:
     //OCF
         Server();
         Server(const parse::serConfig& cfg);
-        Server(const Server& other);
-        Server& operator=(const Server& other);
         ~Server();
     //methods
         int getListenFd() const;

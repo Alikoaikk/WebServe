@@ -16,6 +16,7 @@
 Request::Request()
     : _parseState(PARSE_REQUEST_LINE), _contentLength(0), _chunked(false)
 {}
+
 Request::~Request() {}
 
 static void parseRequestLine(std::string& rawBuffer, ParseState& parseState, std::string& method, std::string& uri, std::string& version)

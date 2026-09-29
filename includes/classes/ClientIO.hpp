@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   EventLoop.hpp                                      :+:      :+:    :+:   */
+/*   ClientIO.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,14 +10,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EVENTLOOP_HPP
-#define EVENTLOOP_HPP
+#ifndef CLIENTIO_HPP
+#define CLIENTIO_HPP
 
 #include <vector>
+#include <poll.h>
 
 struct Client;
-class Server;
 
-void runEventLoop(std::vector<Server*>& servers, std::vector<Client*>& connected_clients);
+void handleClientData(std::vector<Client*>& connected_clients, std::vector<struct pollfd>& fds, size_t serverCount);
+void handleClientSend(std::vector<Client*>& connected_clients, std::vector<struct pollfd>& fds, size_t serverCount);
+void handleClientDisconnect(std::vector<Client*>& connected_clients, size_t index);
 
 #endif
