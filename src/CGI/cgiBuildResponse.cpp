@@ -6,7 +6,7 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/06 21:18:25 by akoaik            #+#    #+#             */
-/*   Updated: 2026/09/23 00:43:07 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/09/30 02:54:59 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,57 +62,25 @@ static void execCgi
         _exit(1);
 }
 
-static int runCgiChild
-(
-	int					pid,
-	int					inPipe[2],
-	int					outPipe[2],
-	const std::string&	body,
-	std::string&		output
-)
-{
-	close(inPipe[0]);
-	close(outPipe[1]);
 
-	if (!body.empty())
-		write(inPipe[1], body.c_str(), body.size());
-	close(inPipe[1]);
 
-	char buf[4096];
-	ssize_t n = read(outPipe[0], buf, sizeof(buf));
-	while (n > 0)
-	{
-		output.append(buf, n);
-		n = read(outPipe[0], buf, sizeof(buf));
-	}
-	close(outPipe[0]);
-
-	int status;
-	waitpid(pid, &status, 0);
-	return status;
-}
-
-Response cgiBuildResponse(const Request& req, const parse::locConfig& loc, const std::string& fullPath)
+cgi_process *cgiBuildResponse(const Request& req, const parse::locConfig& loc, const std::string& fullPath)
 {
     Response res;
     int inPipe[2];
     int outPipe[2];
 
-
     std::vector<std::string> env;
     buildEnv(env, req, fullPath);
 
     if (pipe(inPipe )== -1)
-    {
-        res.setStatusCode(500);
-        return res ;
-    }
+        return (NULL);
+
     if(pipe(outPipe) == -1)
     {
         close(inPipe[0]);
         close(inPipe[1]);
-        res.setStatusCode(500);
-        return res;
+        return (NULL);
     }
 
 	int pid = fork();
@@ -122,8 +90,7 @@ Response cgiBuildResponse(const Request& req, const parse::locConfig& loc, const
 		close(inPipe[1]);
 		close(outPipe[0]);
 		close(outPipe[1]);
-		res.setStatusCode(500);
-		return res;
+		return (NULL);
 	}
 	else if (pid == 0)
 	{
@@ -146,19 +113,26 @@ Response cgiBuildResponse(const Request& req, const parse::locConfig& loc, const
 		}
 
 		execCgi(interpreter, script, env);
+        _exit(1);
 	}
-	else
-	{
-		std::string output;
-		int status = runCgiChild(pid, inPipe, outPipe, req._body, output);
 
-		if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-		{
-			res.setStatusCode(500);
-			return res;
-		}
-		res.setStatusCode(200);
-		res.setBody(output);
-	}
-    return res;
+    // code :
+
+        close(inPipe[0]);
+        close(outPipe[1]);
+
+        fcntl(inPipe[1], F_SETFL, O_NONBLOCK);
+        fcntl(outPipe[0], F_SETFL, O_NONBLOCK);
+
+        cgi_process* proc = new cgi_process();
+        proc->pid = pid;
+        proc->inFd = inPipe[1];
+        proc->outFd = outPipe[0];
+        proc->body = req._body;
+        proc->bodySent = 0;
+        proc->startTime = time(NULL);
+        proc->done = false;
+
+        return proc ;
+
 }
