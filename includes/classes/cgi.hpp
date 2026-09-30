@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgi.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/26 18:31:56 by akoaik            #+#    #+#             */
-/*   Updated: 2026/09/29 20:08:19 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/09/30 22:56:22 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,9 @@ typedef struct cgi
             done(false)
     {}
 } cgi_process ;
+
+struct Client;
+
+void cgiFinishResponse(Client* client);
 
 #endif

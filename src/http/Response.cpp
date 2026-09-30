@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:33:57 by msafa             #+#    #+#             */
-/*   Updated: 2026/09/03 19:47:14 by msafa            ###   ########.fr       */
+/*   Updated: 2026/09/30 22:50:53 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ std::string Response::getStatusMessage(int code)
         return "Method Not Allowed";
     case 500:
         return "Internal Server Error";
+    case 502:
+        return "Bad Gateway";
     case 413:
         return "Payload Too Large";
     default:
