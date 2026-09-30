@@ -6,7 +6,7 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:33:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/09/12 20:08:51 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/09/30 02:46:41 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <string>
 #include <map>
 #include "Parsing.hpp"
+#include "cgi.hpp"
 
 class Request;
 class parse;
@@ -50,7 +51,7 @@ std::string createPath(const std::string& uri, const parse::locConfig& loc);
 std::string getMimeType(const std::string& path);
 const parse::locConfig* findLocation(const std::string& uri, const parse::serConfig& serv);
 bool needsCgi(const std::string& fullPath, const parse::locConfig& loc);
-Response cgiBuildResponse(const Request& req, const parse::locConfig& loc, const std::string& fullPath);
+cgi_process *cgiBuildResponse(const Request& req, const parse::locConfig& loc, const std::string& fullPath);
 
 #endif
 
