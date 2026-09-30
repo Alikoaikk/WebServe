@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/09/30 19:13:15 by msafa            ###   ########.fr       */
+/*   Updated: 2026/09/30 22:49:53 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static bool shouldKeepAlive(const Request* req)
     return connection == "keep-alive";
 }
 
-static void finalizeResponse(Client* client)
+void finalizeResponse(Client* client)
 {
     if(client->response->getStatusCode() >= 400)
         client->keep_alive = false;
@@ -75,7 +75,7 @@ static bool tryLoadErrorPage(Client* client, int code, std::string& body)
         return false;
 }
 
-static void buildErrorResponse(Client* client, int code)
+void buildErrorResponse(Client* client, int code)
 {
     client->response->setStatusCode(code);
     std::string message = client->response->getStatusMessage(code);
@@ -108,7 +108,7 @@ static bool bodyTooLarge(const Request* req, size_t limit)
     return false;
 }
 
-static void dispatchRequest(Client* client, const parse::locConfig* loc)
+static bool dispatchRequest(Client* client, const parse::locConfig* loc)
 {
     const Request& req = *client->request;
     const parse::serConfig& serv = *client->serverConfig;
@@ -116,13 +116,20 @@ static void dispatchRequest(Client* client, const parse::locConfig* loc)
     methods m;
 
     if (needsCgi(fullPath, *loc))
+    {
         client->cgi = cgiBuildResponse(req, *loc, fullPath);
+        if (client->cgi == NULL)
+            buildErrorResponse(client, 500);
+        return true; 
+    }
     else if (req._method == "GET")
         *client->response = m.handleGet(req, serv);
     else if (req._method == "DELETE")
         *client->response = m.handleDelete(req, serv);
     else if (req._method == "POST")
         *client->response = m.handlePost(req, serv);
+
+    return false ;
 }
 
 static void buildResponse(Client* client)
@@ -138,7 +145,9 @@ static void buildResponse(Client* client)
         buildErrorResponse(client, 405);
         return;
     }
-    dispatchRequest(client, loc);
+    if (dispatchRequest(client, loc))
+        return ;
+    
     int status = client->response->getStatusCode();
     if (status >= 400 && client->response->getBody().empty())
         buildErrorResponse(client, status);
@@ -148,6 +157,9 @@ static void buildResponse(Client* client)
 
 void processClientRequest(Client* client)
 {
+    if (client->cgi != NULL)
+        return ;
+
     size_t limit = client->serverConfig->clientMaxBodySize;
     if (bodyTooLarge(client->request, limit))
         buildErrorResponse(client, 413);

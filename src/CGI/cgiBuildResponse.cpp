@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgiBuildResponse.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/06 21:18:25 by akoaik            #+#    #+#             */
-/*   Updated: 2026/09/30 02:54:59 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/09/30 21:49:13 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ cgi_process *cgiBuildResponse(const Request& req, const parse::locConfig& loc, c
     Response res;
     int inPipe[2];
     int outPipe[2];
-
+    
     std::vector<std::string> env;
     buildEnv(env, req, fullPath);
 
