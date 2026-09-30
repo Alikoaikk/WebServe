@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/09/29 18:58:24 by msafa            ###   ########.fr       */
+/*   Updated: 2026/09/30 19:13:15 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ static void dispatchRequest(Client* client, const parse::locConfig* loc)
     methods m;
 
     if (needsCgi(fullPath, *loc))
-        *client->response = cgiBuildResponse(req, *loc, fullPath);
+        client->cgi = cgiBuildResponse(req, *loc, fullPath);
     else if (req._method == "GET")
         *client->response = m.handleGet(req, serv);
     else if (req._method == "DELETE")
