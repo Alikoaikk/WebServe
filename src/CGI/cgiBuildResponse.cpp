@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/06 21:18:25 by akoaik            #+#    #+#             */
-/*   Updated: 2026/09/30 21:49:13 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/02 00:28:34 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,16 @@ static void buildEnv
     env.push_back("PATH_INFO=");
     env.push_back("GATEWAY_INTERFACE=CGI/1.1");
     env.push_back("SERVER_PROTOCOL=HTTP/1.1");
+
+    std::map<std::string, std::string>::const_iterator it = req._headers.find("Content-Type");
+    if (it != req._headers.end())
+        env.push_back("CONTENT_TYPE=" + it->second);
 }
 
 static std::string getInterpreter(const parse::locConfig& loc)
 {
+    if(!loc.cgiInterpreter.empty())
+        return loc.cgiInterpreter;
     if (loc.cgiPass == ".py")
         return "/usr/bin/python3";
     if (loc.cgiPass == ".php")

@@ -6,11 +6,19 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/09/29 18:58:24 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/01 23:00:30 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/imports.hpp"
+
+short   getRevents(const std::vector<struct pollfd>& fds, int fd)
+{
+    for(size_t i = 0; i < fds.size(); i++)
+        if(fds[i].fd == fd)
+            return fds[i].revents;
+    return 0;
+}
 
 void handleClientDisconnect(std::vector<Client*>& connected_clients, size_t index)
 {
@@ -39,14 +47,14 @@ static bool finishSend(std::vector<Client*>& clients, size_t i)
     return true;
 }
 
-void handleClientData(std::vector<Client*>& connected_clients, std::vector<struct pollfd>& fds, size_t serverCount)
+void handleClientData(std::vector<Client*>& connected_clients, std::vector<struct pollfd>& fds)
 {
     for(size_t i = 0; i < connected_clients.size(); i++)
     {
-        if(!(fds[serverCount + i].revents & POLLIN))
+        if(!(getRevents(fds, connected_clients[i]->fd) & (POLLIN | POLLHUP | POLLERR)))
             continue;
         char buffer[1024];
-        ssize_t bytesReceived = recv(fds[serverCount + i].fd, buffer, sizeof(buffer) - 1,0);
+        ssize_t bytesReceived = recv(connected_clients[i]->fd, buffer, sizeof(buffer) - 1,0);
         if(bytesReceived > 0)
         {
             connected_clients[i]->last_activity = time(NULL);
@@ -54,7 +62,7 @@ void handleClientData(std::vector<Client*>& connected_clients, std::vector<struc
             connected_clients[i]->request->parse(chunk);
             processClientRequest(connected_clients[i]);
         }
-        else if(bytesReceived == 0 || bytesReceived == -1)
+        else
         {
             handleClientDisconnect(connected_clients,i);
             i--;
@@ -62,18 +70,16 @@ void handleClientData(std::vector<Client*>& connected_clients, std::vector<struc
     }
 }
 
-void handleClientSend(std::vector<Client*>& connected_clients,std::vector<struct pollfd>& fds,size_t serverCount)
+void handleClientSend(std::vector<Client*>& connected_clients,std::vector<struct pollfd>& fds)
 {
     for(size_t i = 0; i < connected_clients.size(); i++)
     {
-        if(serverCount + i >= fds.size())
-            break;
-        if(!((fds[serverCount + i].revents & POLLOUT) && connected_clients[i]->send_buffer.length() > 0))
+        if(!((getRevents(fds, connected_clients[i]->fd) & POLLOUT) && connected_clients[i]->send_buffer.length() > 0))
             continue;
         ssize_t bytesSent = send(connected_clients[i]->fd,
                                  connected_clients[i]->send_buffer.c_str(),
                                  connected_clients[i]->send_buffer.length(),0);
-        if(bytesSent < 0)
+        if(bytesSent <= 0)
         {
             handleClientDisconnect(connected_clients,i);
             i--;
