@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/09/30 19:08:19 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/02 00:20:41 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,15 @@ static void checkClientTimeouts(std::vector<Client*>& connected_clients)
             i--;
         }
     }
+}
+
+static void addPollFd(std::vector<struct pollfd>& fds, int fd, short int events)
+{
+    struct pollfd p;
+    p.fd = fd;
+    p.events = events;
+    p.revents = 0;
+    fds.push_back(p);
 }
 
 static void buildPollArray(std::vector<struct pollfd>& fds, std::vector<Server*>& servers, std::vector<Client*>& connected_clients)
@@ -45,6 +54,17 @@ static void buildPollArray(std::vector<struct pollfd>& fds, std::vector<Server*>
             fds[servers.size() + i].events = POLLIN  | POLLOUT;
         fds[servers.size() + i].revents = 0;
     }
+
+    for (size_t i = 0; i < connected_clients.size(); i++)
+    {
+        cgi_process* cgi = connected_clients[i]->cgi;
+        if (cgi == NULL)
+            continue;
+        if (cgi->inFd != -1)
+            addPollFd(fds, cgi->inFd, POLLOUT);
+        if (cgi->outFd != -1)
+            addPollFd(fds, cgi->outFd, POLLIN);
+    }
 }
 
 static void acceptNewClients(std::vector<Server*>& servers, std::vector<struct pollfd>& fds, std::vector<Client*>& connected_clients)
@@ -56,17 +76,37 @@ static void acceptNewClients(std::vector<Server*>& servers, std::vector<struct p
     }
 }
 
+static void checkCgiTimeouts(std::vector<Client*>& connected_clients)
+{
+    time_t currentTime = time(NULL);
+    for (size_t i = 0; i < connected_clients.size(); i++)
+    {
+        Client* client = connected_clients[i];
+        if (client->cgi == NULL)
+            continue;
+        if (currentTime - client->cgi->startTime > 10)
+        {
+            cgiCleanup(client->cgi);
+            delete client->cgi;
+            client->cgi = NULL;
+            buildErrorResponse(client, 504);
+        }
+    }
+}
+
 void runEventLoop(std::vector<Server*>& servers, std::vector<Client*>& connected_clients)
 {
     std::vector<struct pollfd> fds;
 
     while (true)
     {
+        checkCgiTimeouts(connected_clients);
         checkClientTimeouts(connected_clients);
         buildPollArray(fds, servers, connected_clients);
         poll(&fds[0], fds.size(), 5000);
+        handleCgiIO(connected_clients, fds);
         acceptNewClients(servers, fds, connected_clients);
-        handleClientData(connected_clients, fds, servers.size());
-        handleClientSend(connected_clients, fds, servers.size());
+        handleClientData(connected_clients, fds);
+        handleClientSend(connected_clients, fds);
     }
 }

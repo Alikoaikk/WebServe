@@ -6,11 +6,12 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 00:32:10 by akoaik            #+#    #+#             */
-/*   Updated: 2026/09/28 16:34:26 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/01 22:45:12 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/imports.hpp"
+#include <csignal>
 
 static parse loadConfig(int argc, char *argv[])
 {
@@ -58,6 +59,7 @@ static void initializeServers(const parse& config, std::vector<Server*>& servers
 
 int main(int argc, char *argv[])
 {
+    signal(SIGPIPE, SIG_IGN);
     try
     {
         parse config = loadConfig(argc, argv);
@@ -72,6 +74,5 @@ int main(int argc, char *argv[])
     {
         return (1);
     }
-
     return (0);
 }

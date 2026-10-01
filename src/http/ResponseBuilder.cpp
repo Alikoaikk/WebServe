@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/09/30 22:49:53 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/01 22:50:58 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,6 @@ void processClientRequest(Client* client)
 {
     if (client->cgi != NULL)
         return ;
-
     size_t limit = client->serverConfig->clientMaxBodySize;
     if (bodyTooLarge(client->request, limit))
         buildErrorResponse(client, 413);

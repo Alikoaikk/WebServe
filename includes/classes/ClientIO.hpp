@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:23 by msafa             #+#    #+#             */
-/*   Updated: 2026/05/09 15:46:05 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/01 22:39:49 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@
 
 struct Client;
 
-void handleClientData(std::vector<Client*>& connected_clients, std::vector<struct pollfd>& fds, size_t serverCount);
-void handleClientSend(std::vector<Client*>& connected_clients, std::vector<struct pollfd>& fds, size_t serverCount);
+void handleClientData(std::vector<Client*>& connected_clients, std::vector<struct pollfd>& fds);
+void handleClientSend(std::vector<Client*>& connected_clients, std::vector<struct pollfd>& fds);
 void handleClientDisconnect(std::vector<Client*>& connected_clients, size_t index);
+short getRevents(const std::vector<struct pollfd>& fds, int fd);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:15:03 by msafa             #+#    #+#             */
-/*   Updated: 2026/09/28 20:42:02 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/10/01 23:17:50 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,6 @@ Client::~Client()
         close(fd);
     delete request;
     delete response;
+    cgiCleanup(cgi);
     delete cgi ;
 }

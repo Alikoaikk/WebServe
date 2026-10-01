@@ -145,7 +145,15 @@ void Request::parse(std::string& chunk)
 {
     _rawBuffer += chunk;
     if(_parseState == PARSE_REQUEST_LINE)
+    {
         parseRequestLine(_rawBuffer, _parseState, _method, _uri, _version);
+        size_t q = _uri.find('?');
+        if (q != std::string::npos)
+        {
+            _queryString = _uri.substr(q + 1);
+            _uri = _uri.substr(0, q);
+        }
+    }
     if(_parseState == PARSE_HEADERS)
         parseHeaders(_rawBuffer, _parseState, _headers, _contentLength, _chunked);
     if(_parseState == PARSE_BODY)

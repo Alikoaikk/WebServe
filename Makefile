@@ -25,7 +25,9 @@ SRCS    = main.cpp \
           src/http/methods/serveFile_helper.cpp \
           src/http/methods/mimeType.cpp \
           src/CGI/needCGI.cpp \
-          src/CGI/cgiBuildResponse.cpp
+          src/CGI/cgiBuildResponse.cpp \
+          src/CGI/cgiFinishResponse.cpp \
+          src/CGI/cgiIO.cpp
 
 OBJS    = $(SRCS:.cpp=.o)
 
