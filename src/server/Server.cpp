@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 19:30:00 by msafa             #+#    #+#             */
-/*   Updated: 2026/09/29 20:15:17 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/02 23:08:44 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,50 +68,23 @@ const parse::serConfig& Server::getConfig() const
     return config;
 }
 
-static void handleAcceptError(int errorCode)
-{
-    if (errorCode == EAGAIN || errorCode == EWOULDBLOCK)
-        return;
-    if (errorCode == EINTR)
-        return;
-    if (errorCode == EMFILE)
-    {
-        std::cerr << "accept() failed: Process file descriptor limit reached" << std::endl;
-        return;
-    }
-    if (errorCode == EBADF)
-    {
-        std::cerr << "accept() failed: Invalid listening socket (BUG!)" << std::endl;
-        return;
-    }
-    std::cerr << "accept() failed: " << strerror(errorCode) << std::endl;
-}
-
 void Server::acceptNewClient(std::vector<Client*>& connected_clients)
 {
     struct sockaddr_in clientAddr;
     socklen_t addrLen = sizeof(clientAddr);
     int clientFd = accept(listenFd, (struct sockaddr*)&clientAddr, &addrLen);
-    if (clientFd != -1)
-    {
-        try
-        {
-            setNonBlocking(clientFd);
-            Client* client = new Client(clientFd);
-            client->serverConfig = &this->config;
-            connected_clients.push_back(client);
-        }
-        catch (const std::exception& e)
-        {
-            close(clientFd);
-            std::cerr << "Failed to create client: " << e.what() << std::endl;
-        }
+    if (clientFd == -1)
         return;
-    }
-    if (errno == EINTR)
+    try
     {
-        acceptNewClient(connected_clients);
-        return;
+        setNonBlocking(clientFd);
+        Client* client = new Client(clientFd);
+        client->serverConfig = &this->config;
+        connected_clients.push_back(client);
     }
-    handleAcceptError(errno);
+    catch (const std::exception& e)
+    {
+        close(clientFd);
+        std::cerr << "Failed to create client: " << e.what() << std::endl;
+    }
 }

@@ -1,4 +1,3 @@
-
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -7,11 +6,12 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:32:55 by msafa             #+#    #+#             */
-/*   Updated: 2026/04/19 19:59:40 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/03 02:00:11 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/imports.hpp"
+#include "classes/Request_helper.hpp"
 
 Request::Request()
     : _parseState(PARSE_REQUEST_LINE), _contentLength(0), _chunked(false)
@@ -153,9 +153,15 @@ void Request::parse(std::string& chunk)
             _queryString = _uri.substr(q + 1);
             _uri = _uri.substr(0, q);
         }
+        if(_parseState == PARSE_HEADERS)
+        {
+            std::string decoded;
+            if(!urlDecode(_uri, decoded) || !normalizeUri(decoded, _uri))
+                _parseState = PARSE_ERROR;
+        }
     }
     if(_parseState == PARSE_HEADERS)
-        parseHeaders(_rawBuffer, _parseState, _headers, _contentLength, _chunked);
+          parseHeaders(_rawBuffer, _parseState, _headers, _contentLength, _chunked);
     if(_parseState == PARSE_BODY)
         parseBody(_rawBuffer, _parseState, _body, _contentLength, _chunked);
 }
