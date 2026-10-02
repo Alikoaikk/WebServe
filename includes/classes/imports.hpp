@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   imports.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 17:08:49 by akoaik            #+#    #+#             */
-/*   Updated: 2026/09/26 21:41:59 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/10/02 23:17:43 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 
 // system headers
 #include <arpa/inet.h>
+#include <netdb.h>
 #include <fcntl.h>
 #include <netinet/in.h>
 #include <poll.h>

@@ -13,7 +13,7 @@
                 "${workspaceFolder}/src/server",
                 "${workspaceFolder}/src/CGI"
             ],
-            "defines": [],
+            "defines": ["_GNU_SOURCE"],
             "compilerPath": "/usr/bin/g++",
             "cStandard": "c11",
             "cppStandard": "c++98",

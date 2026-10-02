@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DELETE.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 20:13:30 by akoaik            #+#    #+#             */
-/*   Updated: 2026/08/26 10:47:58 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/10/02 23:57:44 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "classes/serveFile_helper.hpp"
 #include <sys/stat.h>
 #include <unistd.h>
+#include <cstdio>
 
 Response methods::handleDelete(const Request& req, const parse::serConfig& ser)
 {
@@ -39,7 +40,7 @@ Response methods::handleDelete(const Request& req, const parse::serConfig& ser)
         res.setStatusCode(403);
         return res;
     }
-    if (unlink(fullPath.c_str()) == -1)
+    if (std::remove(fullPath.c_str()) != 0)
     {
         Response res;
         res.setStatusCode(403);

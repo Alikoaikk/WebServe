@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/06 21:18:25 by akoaik            #+#    #+#             */
-/*   Updated: 2026/10/02 00:28:34 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/02 23:58:35 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,8 @@ static void execCgi
                 envp.push_back(const_cast<char*>(env[i].c_str()));
         envp.push_back(NULL);
         execve(argv[0], &argv[0], &envp[0]);
-        _exit(1);
+        std::exit(1);
 }
-
-
 
 cgi_process *cgiBuildResponse(const Request& req, const parse::locConfig& loc, const std::string& fullPath)
 {
@@ -119,7 +117,7 @@ cgi_process *cgiBuildResponse(const Request& req, const parse::locConfig& loc, c
 		}
 
 		execCgi(interpreter, script, env);
-        _exit(1);
+        std::exit(1);
 	}
 
     // code :

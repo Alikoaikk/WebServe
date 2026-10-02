@@ -15,6 +15,7 @@ SRCS    = main.cpp \
           src/server/ClientIO.cpp \
           src/server/Client.cpp \
           src/http/Request.cpp \
+          src/http/Request_helper.cpp \
           src/http/Response.cpp \
           src/http/ResponseBuilder.cpp \
           src/http/methods/GET.cpp \
