@@ -6,12 +6,26 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/06 21:18:25 by akoaik            #+#    #+#             */
-/*   Updated: 2026/10/02 23:58:35 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/03 19:01:35 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/imports.hpp"
 #include <sys/wait.h>
+#include <cctype>
+
+static std::string headerToEnvName(const std::string& key)
+{
+    std::string name = "HTTP_";
+    for(size_t i = 0; i < key.size(); i++)
+    {
+        if(key[i] == '-')
+            name += '_';
+        else
+            name += static_cast<char>(std::toupper(static_cast<unsigned char>(key[i])));
+    }
+    return name;
+}
 
 static void buildEnv
 (
@@ -34,6 +48,14 @@ static void buildEnv
     std::map<std::string, std::string>::const_iterator it = req._headers.find("Content-Type");
     if (it != req._headers.end())
         env.push_back("CONTENT_TYPE=" + it->second);
+    env.push_back("SCRIPT_NAME=" + req._uri);
+    std::map<std::string, std::string>::const_iterator h;
+    for(h = req._headers.begin(); h!= req._headers.end(); ++h)
+    {
+        if (h->first == "Content-Type" || h->first == "Content-Length")
+            continue;
+        env.push_back(headerToEnvName(h->first) + "=" + h-> second);
+    }
 }
 
 static std::string getInterpreter(const parse::locConfig& loc)

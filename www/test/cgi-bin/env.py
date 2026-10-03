@@ -15,7 +15,9 @@ params = parse_qs(qs)
 
 rows = ""
 for key in ("REQUEST_METHOD", "QUERY_STRING", "CONTENT_LENGTH",
-            "SCRIPT_FILENAME", "GATEWAY_INTERFACE", "SERVER_PROTOCOL"):
+              "SCRIPT_FILENAME", "SCRIPT_NAME", "GATEWAY_INTERFACE",
+  "SERVER_PROTOCOL",
+              "HTTP_HOST", "HTTP_USER_AGENT", "HTTP_COOKIE"):
     rows += "<tr><td>%s</td><td>%s</td></tr>" % (key, os.environ.get(key, ""))
 
 name = params.get("name", ["stranger"])[0]
