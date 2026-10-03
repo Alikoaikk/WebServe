@@ -6,27 +6,11 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/10/01 22:50:58 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/03 17:52:26 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/imports.hpp"
-
-static const parse::locConfig* findLocation(const parse::serConfig& config, const std::string& uri)
-{
-    const parse::locConfig* winner = NULL;
-    size_t winnerLen = 0;
-    for(size_t i = 0; i < config.locations.size(); i++)
-    {
-        const std::string& locPath = config.locations[i].path;
-        if(uri.find(locPath) == 0 && locPath.length() > winnerLen)
-        {
-            winner = &config.locations[i];
-            winnerLen = locPath.length();
-        }
-    }
-    return winner;
-}
 
 static bool shouldKeepAlive(const Request* req)
 {
@@ -134,7 +118,7 @@ static bool dispatchRequest(Client* client, const parse::locConfig* loc)
 
 static void buildResponse(Client* client)
 {
-    const parse::locConfig* loc = findLocation(*client->serverConfig, client->request->_uri);
+    const parse::locConfig* loc = findLocation(client->request->_uri, *client->serverConfig);
     if (loc == NULL)
     {
         buildErrorResponse(client, 404);
@@ -143,6 +127,11 @@ static void buildResponse(Client* client)
     if (!isMethodAllowed(loc, client->request->_method))
     {
         buildErrorResponse(client, 405);
+        return;
+    }
+    if (loc->root.empty() && loc->redirectCode == 0)
+    {
+        buildErrorResponse(client, 500);
         return;
     }
     if (dispatchRequest(client, loc))
