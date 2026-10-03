@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:33:57 by msafa             #+#    #+#             */
-/*   Updated: 2026/09/30 22:50:53 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/03 17:06:25 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,26 @@ std::string Response::getStatusMessage(int code)
 {
     switch (code)
     {
-    case 200:
-        return "OK";
-    case 400:
-        return "Bad Request";
-    case 404:
-        return "Not Found";
-    case 405:
-        return "Method Not Allowed";
-    case 500:
-        return "Internal Server Error";
-    case 502:
-        return "Bad Gateway";
-    case 413:
-        return "Payload Too Large";
-    default:
-        return "Unknown";
+    case 200: return "OK";
+    case 201: return "Created";
+    case 204: return "No Content";
+    case 301: return "Moved Permanently";
+    case 302: return "Found";
+    case 303: return "See Other";
+    case 307: return "Temporary Redirect";
+    case 308: return "Permanent Redirect";
+    case 400: return "Bad Request";
+    case 403: return "Forbidden";
+    case 404: return "Not Found";
+    case 405: return "Method Not Allowed";
+    case 408: return "Request Timeout";
+    case 413: return "Payload Too Large";
+    case 500: return "Internal Server Error";
+    case 501: return "Not Implemented";
+    case 502: return "Bad Gateway";
+    case 504: return "Gateway Timeout";
+    case 505: return "HTTP Version Not Supported";
+    default: return "Unknown";  
     }
 }
 
