@@ -24,20 +24,20 @@ static int hexValue(char c)
     return -1;
 }
 
-bool urlDecode(const std::string& in, std::string& out)
+bool urlDecode(std::string& uri)
 {
-    out.clear();
-    for(size_t i = 0; i < in.size(); i++)
+    std::string out;
+    for(size_t i = 0; i < uri.size(); i++)
     {
-        if(in[i] != '%')
+        if(uri[i] != '%')
         {
-            out += in[i];
+            out += uri[i];
             continue;
         }
-        if(i + 2 >= in.size())
+        if(i + 2 >= uri.size())
             return false;
-        int hi = hexValue(in[i + 1]);
-        int lo = hexValue(in[i + 2]);
+        int hi = hexValue(uri[i + 1]);
+        int lo = hexValue(uri[i + 2]);
         if(hi == -1 || lo == -1)
             return false;
         char c = static_cast<char>(hi * 16 + lo);
@@ -46,21 +46,19 @@ bool urlDecode(const std::string& in, std::string& out)
         out += c;
         i += 2;
     }
+    uri = out;
     return true;
 }
 
-bool normalizeUri(const std::string& in, std::string& out)
+static bool resolveSegments(const std::string& uri, std::vector<std::string>& segments)
 {
-    if (in.empty() || in[0] != '/')
-        return false;
-    std::vector<std::string> segments;
     size_t start = 0;
-    while(start <= in.size())
+    while(start <= uri.size())
     {
-        size_t slash = in.find('/', start);
+        size_t slash = uri.find('/', start);
         if(slash == std::string::npos)
-            slash = in.size();
-        std::string seg = in.substr(start, slash - start);
+            slash = uri.size();
+        std::string seg = uri.substr(start, slash - start);
         if(seg == "..")
         {
             if(segments.empty())
@@ -71,10 +69,12 @@ bool normalizeUri(const std::string& in, std::string& out)
             segments.push_back(seg);
         start = slash + 1;
     }
-    bool endsAsDir = in[in.size() - 1] == '/'
-        || (in.size() >= 2 && in.substr(in.size() - 2) == "/.")
-        || (in.size() >= 3 && in.substr(in.size() - 3) == "/..");
-    out = "/";
+    return true;
+}
+
+static std::string joinSegments(const std::vector<std::string>& segments, bool endsAsDir)
+{
+    std::string out = "/";
     for (size_t i = 0; i < segments.size(); i++)
     {
         if(i > 0)
@@ -83,5 +83,19 @@ bool normalizeUri(const std::string& in, std::string& out)
     }
     if (endsAsDir && !segments.empty())
         out += "/";
+    return out;
+}
+
+bool normalizeUri(std::string& uri)
+{
+    if (uri.empty() || uri[0] != '/')
+        return false;
+    std::vector<std::string> segments;
+    if (!resolveSegments(uri, segments))
+        return false;
+    bool endsAsDir = uri[uri.size() - 1] == '/'
+        || (uri.size() >= 2 && uri.substr(uri.size() - 2) == "/.")
+        || (uri.size() >= 3 && uri.substr(uri.size() - 3) == "/..");
+    uri = joinSegments(segments, endsAsDir);
     return true;
 }

@@ -15,7 +15,7 @@
 
 #include <string>
 
-bool urlDecode(const std::string& in, std::string& out);
-bool normalizeUri(const std::string& in, std::string& out);
+bool urlDecode(std::string& uri);
+bool normalizeUri(std::string& uri);
 
 #endif

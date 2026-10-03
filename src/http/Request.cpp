@@ -155,8 +155,7 @@ void Request::parse(std::string& chunk)
         }
         if(_parseState == PARSE_HEADERS)
         {
-            std::string decoded;
-            if(!urlDecode(_uri, decoded) || !normalizeUri(decoded, _uri))
+            if(!urlDecode(_uri) || !normalizeUri(_uri))
                 _parseState = PARSE_ERROR;
         }
     }
