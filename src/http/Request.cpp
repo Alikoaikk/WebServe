@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/13 18:32:55 by msafa             #+#    #+#             */
-/*   Updated: 2026/10/03 02:00:11 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/04 22:27:46 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,18 @@ Request::Request()
 {}
 
 Request::~Request() {}
+
+static bool isValidMethod(const std::string& method)
+{
+    if(method.empty())
+        return false;
+    for (size_t i = 0; i < method.size(); i++)
+    {
+        if(method[i] < 'A' || method[i] > 'Z')
+            return false;
+    }
+    return true;
+}
 
 static void parseRequestLine(std::string& rawBuffer, ParseState& parseState, std::string& method, std::string& uri, std::string& version)
 {
@@ -33,7 +45,7 @@ static void parseRequestLine(std::string& rawBuffer, ParseState& parseState, std
             parseState = PARSE_ERROR;
             return;
         }
-        if(method != "GET" && method != "POST" && method != "DELETE")
+        if(!isValidMethod(method))
         {
             parseState = PARSE_ERROR;
             return;

@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/10/03 17:52:26 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/04 22:34:15 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,11 @@ static bool dispatchRequest(Client* client, const parse::locConfig* loc)
 {
     const Request& req = *client->request;
     const parse::serConfig& serv = *client->serverConfig;
+    if(req._method != "GET" && req._method != "POST" && req._method != "DELETE")
+    {
+        buildErrorResponse(client, 501);
+        return true;
+    }
     std::string fullPath = createPath(req._uri, *loc);
     methods m;
 
