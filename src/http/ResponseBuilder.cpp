@@ -6,11 +6,12 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/10/03 17:52:26 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/04 21:41:49 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/imports.hpp"
+#include <sys/stat.h>
 
 static bool shouldKeepAlive(const Request* req)
 {
@@ -101,6 +102,17 @@ static bool dispatchRequest(Client* client, const parse::locConfig* loc)
 
     if (needsCgi(fullPath, *loc))
     {
+        struct stat st;
+        if(stat(fullPath.c_str(), &st) == -1)
+        {
+            buildErrorResponse(client, 404);
+            return true;
+        }
+        if(!S_ISREG(st.st_mode))
+        {
+            buildErrorResponse(client, 403);
+            return true;
+        }
         client->cgi = cgiBuildResponse(req, *loc, fullPath);
         if (client->cgi == NULL)
             buildErrorResponse(client, 500);
