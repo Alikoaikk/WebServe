@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseBuilder.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/10/04 22:34:15 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/05 20:15:37 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/imports.hpp"
+#include <sys/stat.h>
 
 static bool shouldKeepAlive(const Request* req)
 {
@@ -106,10 +107,21 @@ static bool dispatchRequest(Client* client, const parse::locConfig* loc)
 
     if (needsCgi(fullPath, *loc))
     {
+        struct stat st;
+        if(stat(fullPath.c_str(), &st) == -1)
+        {
+            buildErrorResponse(client, 404);
+            return true;
+        }
+        if(!S_ISREG(st.st_mode))
+        {
+            buildErrorResponse(client, 403);
+            return true;
+        }
         client->cgi = cgiBuildResponse(req, *loc, fullPath);
         if (client->cgi == NULL)
             buildErrorResponse(client, 500);
-        return true; 
+        return true;
     }
     else if (req._method == "GET")
         *client->response = m.handleGet(req, serv);
@@ -141,7 +153,7 @@ static void buildResponse(Client* client)
     }
     if (dispatchRequest(client, loc))
         return ;
-    
+
     int status = client->response->getStatusCode();
     if (status >= 400 && client->response->getBody().empty())
         buildErrorResponse(client, status);
