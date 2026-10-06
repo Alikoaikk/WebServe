@@ -23,7 +23,10 @@ static void parseMethods
     i++;
     while (i < tokens.size() && tokens[i] != ";")
     {
-        lc.methods.push_back(tokens[i]);
+        const std::string &m = tokens[i];
+        if (m != "GET" && m != "POST" && m != "DELETE")
+            throw std::runtime_error("invalid method: " + m);
+        lc.methods.push_back(m);
         i++;
     }
     expectSemicolon(tokens, i);
@@ -37,6 +40,8 @@ static void parseRoot
 )
 {
     i++;
+    if (i >= tokens.size())
+        throw std::runtime_error("unexpected end of file after 'root'");
     lc.root = tokens[i];
     i++;
     expectSemicolon(tokens, i);
@@ -50,6 +55,8 @@ static void parseIndex
 )
 {
     i++;
+    if (i >= tokens.size())
+        throw std::runtime_error("unexpected end of file after 'index'");
     lc.index = tokens[i];
     i++;
     expectSemicolon(tokens, i);
@@ -63,6 +70,8 @@ static void parseAutoindex
 )
 {
     i++;
+    if (i >= tokens.size())
+        throw std::runtime_error("unexpected end of file after 'autoindex'");
     lc.autoindex = (tokens[i] == "on");
     i++;
     expectSemicolon(tokens, i);
@@ -76,6 +85,8 @@ static void parseUploadStore
 )
 {
     i++;
+    if (i >= tokens.size())
+        throw std::runtime_error("unexpected end of file after 'upload_store'");
     lc.uploadStore = tokens[i];
     i++;
     expectSemicolon(tokens, i);
@@ -89,6 +100,8 @@ static void parseCgiPass
 )
 {
     i++;
+    if (i >= tokens.size())
+        throw std::runtime_error("unexpected end of file after 'cgi_pass'");
     lc.cgiPass = tokens[i];
     i++;
     if (i < tokens.size() && tokens[i] != ";")
@@ -107,8 +120,12 @@ static void parseReturn
 )
 {
     i++;
+    if (i >= tokens.size())
+        throw std::runtime_error("unexpected end of file after 'return'");
     lc.redirectCode = std::atoi(tokens[i].c_str());
     i++;
+    if (i >= tokens.size())
+        throw std::runtime_error("unexpected end of file: expected URL after redirect code");
     lc.redirectUrl = tokens[i];
     i++;
     expectSemicolon(tokens, i);
