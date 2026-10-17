@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/07/08 23:23:28 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/17 21:39:24 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ std::vector<std::string> tokenize(const std::string &filename)
         while (iss >> word) // split the line
         {
             if (word[0] == '#') // for comments
-            break ;
+                break ;
             std::string token ;
             for (size_t i = 0; i < word.size(); i++)
             {
@@ -50,6 +50,7 @@ std::vector<std::string> tokenize(const std::string &filename)
             tokens.push_back(token) ;
         }
     }
+    
     return tokens ;
 }
 
