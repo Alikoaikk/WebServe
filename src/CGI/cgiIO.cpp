@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/01 21:21:44 by akoaik            #+#    #+#             */
-/*   Updated: 2026/10/04 21:39:52 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/17 23:32:39 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ void cgiCleanup(cgi_process* cgi)
     if(cgi->pid != -1)
     {
         kill(cgi->pid, SIGKILL);
-        waitpid(cgi->pid, NULL, 0);
+        waitpid(cgi->pid, NULL, 0); // 0: wait forever  |  1: dont wait at all (WNOHANG)
         cgi->pid = -1;
     }
 }
