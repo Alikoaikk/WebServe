@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgiBuildResponse.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/06 21:18:25 by akoaik            #+#    #+#             */
-/*   Updated: 2026/10/03 19:01:35 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/18 19:14:03 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,20 +37,28 @@ static void buildEnv
     std::ostringstream oss;
     oss << req._body.size();
 
+    std::string scriptName = fullPath;
+    size_t slash = fullPath.find_last_of('/');
+    if (slash != std::string::npos)
+        scriptName = fullPath.substr(slash + 1);
+
     env.push_back("REQUEST_METHOD=" + req._method);
     env.push_back("QUERY_STRING=" + req._queryString);
     env.push_back("CONTENT_LENGTH=" + oss.str());
-    env.push_back("SCRIPT_FILENAME=" + fullPath);
+    env.push_back("SCRIPT_FILENAME=" + scriptName);
     env.push_back("PATH_INFO=");
     env.push_back("GATEWAY_INTERFACE=CGI/1.1");
     env.push_back("SERVER_PROTOCOL=HTTP/1.1");
+    env.push_back("REDIRECT_STATUS=200");
+    env.push_back("SCRIPT_NAME=" + req._uri);
 
     std::map<std::string, std::string>::const_iterator it = req._headers.find("Content-Type");
     if (it != req._headers.end())
         env.push_back("CONTENT_TYPE=" + it->second);
-    env.push_back("SCRIPT_NAME=" + req._uri);
+
     std::map<std::string, std::string>::const_iterator h;
-    for(h = req._headers.begin(); h!= req._headers.end(); ++h)
+    h = req._headers.begin();
+    for(; h!= req._headers.end(); h++)
     {
         if (h->first == "Content-Type" || h->first == "Content-Length")
             continue;
@@ -95,7 +103,7 @@ cgi_process *cgiBuildResponse(const Request& req, const parse::locConfig& loc, c
     Response res;
     int inPipe[2];
     int outPipe[2];
-    
+
     std::vector<std::string> env;
     buildEnv(env, req, fullPath);
 
