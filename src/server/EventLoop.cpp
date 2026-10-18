@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   EventLoop.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/10/02 00:20:41 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/18 19:26:26 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ void runEventLoop(std::vector<Server*>& servers, std::vector<Client*>& connected
 {
     std::vector<struct pollfd> fds;
 
-    while (true)
+    while (g_running)
     {
         checkCgiTimeouts(connected_clients);
         checkClientTimeouts(connected_clients);

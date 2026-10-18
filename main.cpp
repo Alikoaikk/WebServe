@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 00:32:10 by akoaik            #+#    #+#             */
-/*   Updated: 2026/10/01 22:45:12 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/18 19:32:05 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/imports.hpp"
 #include <csignal>
+
+volatile sig_atomic_t g_running = 1 ;
 
 static parse loadConfig(int argc, char *argv[])
 {
@@ -57,9 +59,16 @@ static void initializeServers(const parse& config, std::vector<Server*>& servers
     }
 }
 
+static void handleSignint(int)
+{
+    g_running = 0 ;
+}
+
 int main(int argc, char *argv[])
 {
     signal(SIGPIPE, SIG_IGN);
+    signal(SIGINT, handleSignint);
+
     try
     {
         parse config = loadConfig(argc, argv);
@@ -69,6 +78,11 @@ int main(int argc, char *argv[])
 
         initializeServers(config, servers);
         runEventLoop(servers, connected_clients);
+
+        for (size_t i = 0; i < connected_clients.size(); i++)
+            delete connected_clients[i];
+        for (size_t i = 0; i < servers.size(); i++)
+            delete servers[i];
     }
     catch (const std::exception& e)
     {
