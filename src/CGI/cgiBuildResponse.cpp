@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgiBuildResponse.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/06 21:18:25 by akoaik            #+#    #+#             */
-/*   Updated: 2026/10/18 19:14:03 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/10/19 21:19:15 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ static void buildEnv
     env.push_back("QUERY_STRING=" + req._queryString);
     env.push_back("CONTENT_LENGTH=" + oss.str());
     env.push_back("SCRIPT_FILENAME=" + scriptName);
-    env.push_back("PATH_INFO=");
     env.push_back("GATEWAY_INTERFACE=CGI/1.1");
     env.push_back("SERVER_PROTOCOL=HTTP/1.1");
     env.push_back("REDIRECT_STATUS=200");

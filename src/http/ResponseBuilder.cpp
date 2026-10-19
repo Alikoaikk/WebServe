@@ -105,7 +105,7 @@ static bool dispatchRequest(Client* client, const parse::locConfig* loc)
     std::string fullPath = createPath(req._uri, *loc);
     methods m;
 
-    if (needsCgi(fullPath, *loc))
+    if (needsCgi(req._uri, *loc))
     {
         struct stat st;
         if(stat(fullPath.c_str(), &st) == -1)
@@ -141,12 +141,19 @@ static void buildResponse(Client* client)
         buildErrorResponse(client, 404);
         return;
     }
+    if (loc->redirectCode != 0)
+    {
+        client->response->setStatusCode(loc->redirectCode);
+        client->response->setHeader("Location", loc->redirectUrl);
+        finalizeResponse(client);
+        return;
+    }
     if (!isMethodAllowed(loc, client->request->_method))
     {
         buildErrorResponse(client, 405);
         return;
     }
-    if (loc->root.empty() && loc->redirectCode == 0)
+    if (loc->root.empty())
     {
         buildErrorResponse(client, 500);
         return;

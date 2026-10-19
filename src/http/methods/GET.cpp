@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 18:32:41 by akoaik            #+#    #+#             */
-/*   Updated: 2026/10/03 00:15:31 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/19 23:20:33 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,14 +76,6 @@ Response methods::handleGet(const Request& req, const parse::serConfig& serv)
         return res;
     }
 
-    if (loc->redirectCode != 0)
-    {
-        Response res;
-        res.setStatusCode(loc->redirectCode);
-        res.setHeader("Location", loc->redirectUrl);
-        return res;
-    }
-
     std::string fullPath = createPath(req._uri, *loc);
     struct stat st;
     if (stat(fullPath.c_str(), &st) == -1)
@@ -94,11 +86,3 @@ Response methods::handleGet(const Request& req, const parse::serConfig& serv)
     }
     return serveFile(fullPath, st, *loc);
 }
-
-/*
-	Most Importent Notes :
-
-		1- stat : is a struct used from stat function
-			it is a system call, that check the validation of a path in the system
-			if it returned -1, so the os couldn't find the path
-*/

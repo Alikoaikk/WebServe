@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parseMultiPart.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/30 20:14:33 by akoaik            #+#    #+#             */
-/*   Updated: 2026/09/03 21:45:07 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/10/20 00:54:10 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ std::string parseMultipart(const std::string& body, const std::string& boundary,
     if (start == std::string::npos)
         return "";
 
-    size_t headerEnd = body.find("\r\n\r\n", start + delimiter.size());
+    size_t headerEnd = body.find("\r\n\r\n", start);
     if (headerEnd == std::string::npos)
         return "";
 
@@ -65,6 +65,7 @@ How the code peels it apart
   Every part is labels → blank line → content. That blank line (\r\n\r\n) is the fold in the envelope. Everything before it is
   labels; everything after is the file.
 
+  --delemiter
   Content-Disposition: ... filename="hello.txt"    ← label
                                                    ← blank line  (headerEnd points here)
   Hi                                               ← content
