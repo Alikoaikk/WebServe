@@ -1,0 +1,1 @@
+Sample file in /data. Try: curl -X DELETE http://127.0.0.1:8081/data/sample.txt
