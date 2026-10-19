@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>hard.conf: server 1</title></head>
+<body>
+  <h1>hard.conf: server 1 (port 8080)</h1>
+  <ul>
+    <li><a href="/files/">/files/</a>: directory listing (autoindex on)</li>
+    <li><a href="/old">/old</a>: 301 redirect to /new</li>
+    <li><a href="/cgi-bin/hello.py">/cgi-bin/hello.py</a>: Python CGI</li>
+    <li><a href="/php/hello.php?name=webserv">/php/hello.php</a>: PHP CGI</li>
+    <li><a href="/nope.html">/nope.html</a>: 404 error page</li>
+  </ul>
+  <h2>Upload a file (POST /upload)</h2>
+  <form action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <button>Upload</button>
+  </form>
+</body>
+</html>
