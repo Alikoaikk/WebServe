@@ -3,28 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   needCGI.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/05 15:24:34 by akoaik            #+#    #+#             */
-/*   Updated: 2026/09/23 01:25:43 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/10/19 20:38:18 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/imports.hpp"
 
-bool needsCgi(const std::string& fullPath, const parse::locConfig& loc)
+bool needsCgi(const std::string& uri, const parse::locConfig& loc)
 {
     if (loc.cgiPass.empty())
         return (false);
 
-    std::string path = fullPath;
-    size_t c = path.find('?');
-    if (c != std::string::npos)
-        path = path.substr(0, c);
-
-    if (path.size() < loc.cgiPass.size())
+    if (uri.size() < loc.cgiPass.size())
         return (false);
 
-    std::string ext = path.substr(path.size() - loc.cgiPass.size());
+    std::string ext = uri.substr(uri.size() - loc.cgiPass.size());
     return (ext == loc.cgiPass);
 }
