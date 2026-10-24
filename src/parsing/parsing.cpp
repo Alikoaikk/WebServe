@@ -57,6 +57,8 @@ void parse::parseTokens(std::vector<std::string> tokens)
             throw std::runtime_error("expected '{' after 'server'");
         i++;
         serConfig sc;
+        sc.port = 0;
+        sc.clientMaxBodySize = 1048576;
         parseServerBlock(tokens, i, sc);
         this->servers.push_back(sc);
     }

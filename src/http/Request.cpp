@@ -12,6 +12,8 @@
 
 #include "classes/imports.hpp"
 #include "classes/Request_helper.hpp"
+#include <algorithm>
+#include <cctype>
 
 Request::Request()
     : _parseState(PARSE_REQUEST_LINE), _contentLength(0), _chunked(false)
@@ -55,7 +57,7 @@ static void parseRequestLine(std::string& rawBuffer, ParseState& parseState, std
     }
 }
 
-static void parseHeaderLine
+static bool parseHeaderLine
 (
     const std::string&                      headerLine,
     std::map<std::string, std::string>&     headers,
@@ -64,21 +66,23 @@ static void parseHeaderLine
 )
 {
     size_t colonPos = headerLine.find(":");
-    if(colonPos != std::string::npos)
+    if(colonPos == std::string::npos || colonPos == 0)
+        return false;
+    std::string key = headerLine.substr(0, colonPos);
+    std::string lowerKey = key;
+    std::transform(lowerKey.begin(), lowerKey.end(), lowerKey.begin(), ::tolower);
+    std::string value = headerLine.substr(colonPos + 1);
+    if(!value.empty() && value[0] == ' ')
+        value = value.substr(1);
+    headers[key] = value;
+    if(lowerKey == "content-length")
     {
-        std::string key = headerLine.substr(0, colonPos);
-        std::string value = headerLine.substr(colonPos + 1);
-        if(!value.empty() && value[0] == ' ')
-            value = value.substr(1);
-        headers[key] = value;
-        if(key == "Content-Length")
-        {
-            std::istringstream iss(value);
-            iss >> contentLength;
-        }
-        if(key == "Transfer-Encoding" && value == "chunked")
-            chunked = true;
+        std::istringstream iss(value);
+        iss >> contentLength;
     }
+    if(lowerKey == "transfer-encoding" && value == "chunked")
+        chunked = true;
+    return true;
 }
 
 static void parseHeaders(std::string& rawBuffer, ParseState& parseState, std::map<std::string, std::string>& headers, size_t& contentLength, bool& chunked)
@@ -95,7 +99,11 @@ static void parseHeaders(std::string& rawBuffer, ParseState& parseState, std::ma
             return;
         }
         std::string headerLine = rawBuffer.substr(0, pos);
-        parseHeaderLine(headerLine, headers, contentLength, chunked);
+        if(!parseHeaderLine(headerLine, headers, contentLength, chunked))
+        {
+            parseState = PARSE_ERROR;
+            return;
+        }
         rawBuffer = rawBuffer.substr(pos + 2);
     }
 }

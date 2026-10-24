@@ -84,5 +84,12 @@ Response methods::handleGet(const Request& req, const parse::serConfig& serv)
         res.setStatusCode(404);
         return res;
     }
+    if (S_ISDIR(st.st_mode) && req._uri[req._uri.size() - 1] != '/')
+    {
+        Response res;
+        res.setStatusCode(301);
+        res.setHeader("Location", req._uri + "/");
+        return res;
+    }
     return serveFile(fullPath, st, *loc);
 }
