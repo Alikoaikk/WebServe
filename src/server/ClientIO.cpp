@@ -6,7 +6,7 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 22:35:24 by msafa             #+#    #+#             */
-/*   Updated: 2026/10/01 23:00:30 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/24 19:30:47 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void handleClientData(std::vector<Client*>& connected_clients, std::vector<struc
     {
         if(!(getRevents(fds, connected_clients[i]->fd) & (POLLIN | POLLHUP | POLLERR)))
             continue;
-        char buffer[1024];
+        char buffer[4096];
         ssize_t bytesReceived = recv(connected_clients[i]->fd, buffer, sizeof(buffer) - 1,0);
         if(bytesReceived > 0)
         {

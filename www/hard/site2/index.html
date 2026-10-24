@@ -1,13 +1,138 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><title>hard.conf: server 2</title></head>
+<head>
+<meta charset="utf-8">
+<title>hard.conf: server 2</title>
+<style>
+  body { font-family: sans-serif; max-width: 760px; margin: 24px auto; padding: 0 16px; color: #222; }
+  h2 { margin-top: 28px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+  input[type=text] { width: 220px; }
+  button { margin: 2px 0; }
+  pre { background: #f4f4f4; padding: 8px; white-space: pre-wrap; word-break: break-all; min-height: 1.2em; }
+  table { border-collapse: collapse; }
+  td { padding: 2px 10px 2px 0; }
+  small { color: #666; }
+</style>
+</head>
 <body>
-  <h1>hard.conf: server 2 (port 8081)</h1>
-  <p>This server only accepts bodies up to 1K.</p>
-  <ul>
-    <li><a href="/data/">/data/</a>: listing + upload + delete</li>
-    <li><a href="/secret">/secret</a>: 301 redirect to /</li>
-    <li><a href="/nope.html">/nope.html</a>: custom 404 page</li>
-  </ul>
+<h1>hard.conf: server 2 (port 8081)</h1>
+<p>Body limit: <b>1K</b>. Uploads go to <code>www/hard/data/uploads/</code> and are served at <code>/data/uploads/</code>.</p>
+
+<h2>1. GET</h2>
+<ul>
+  <li><a href="/data/">/data/</a> (autoindex listing)</li>
+  <li><a href="/data/sample.txt">/data/sample.txt</a> (file)</li>
+  <li><a href="/data/uploads/">/data/uploads/</a> (uploaded files)</li>
+  <li><a href="/secret">/secret</a> (301 redirect to /)</li>
+  <li><a href="/nope.html">/nope.html</a> (custom 404 page)</li>
+</ul>
+
+<h2>2. Upload with a form (multipart)</h2>
+<form action="/data" method="post" enctype="multipart/form-data">
+  <input type="file" name="file"> <button>Upload</button>
+</form>
+<small>The file plus the form headers must be under 1K, so pick a file smaller than about 800 bytes. A bigger file gives 413.</small>
+
+<h2>3. Upload raw text</h2>
+<p>
+  File name: <input type="text" id="rawName" value="note.txt"><br>
+  Content: <input type="text" id="rawBody" value="hello from server 2">
+  <button onclick="rawUpload()">POST</button>
+</p>
+<pre id="rawOut"></pre>
+
+<h2>3b. Upload two files (multipart)</h2>
+<form action="/data" method="post" enctype="multipart/form-data">
+  File 1: <input type="file" name="file1"><br>
+  File 2: <input type="file" name="file2"><br>
+  <button>Upload both</button>
+</form>
+<small>One request, one boundary, two parts. Both files plus the form headers must be under 1K, so pick two very small files (about 300 bytes each). Expected now: only file 1 is saved, because the server reads only the first part.</small>
+
+<h2>4. Uploaded files (DELETE)</h2>
+<button onclick="loadFiles()">Refresh list</button>
+<table id="files"></table>
+<p>
+  Or type a path: <input type="text" id="delPath" value="/data/uploads/note.txt">
+  <button onclick="del(document.getElementById('delPath').value)">DELETE</button>
+</p>
+<pre id="delOut"></pre>
+
+<h2>5. Error cases</h2>
+<table>
+  <tr><td><button onclick="run('POST', '/data/big.txt', 'x'.repeat(2000))">POST 2000 bytes</button></td><td>expect 413</td></tr>
+  <tr><td><button onclick="run('POST', '/', 'hello')">POST to /</button></td><td>expect 405 (/ is GET only)</td></tr>
+  <tr><td><button onclick="run('DELETE', '/')">DELETE /</button></td><td>expect 405</td></tr>
+  <tr><td><button onclick="run('DELETE', '/data/uploads/')">DELETE a folder</button></td><td>expect 403</td></tr>
+  <tr><td><button onclick="run('DELETE', '/data/uploads/nothing.txt')">DELETE a missing file</button></td><td>expect 404</td></tr>
+  <tr><td><button onclick="run('POST', '/data', 'no name')">POST raw with no file name</button></td><td>expect 400</td></tr>
+  <tr><td><button onclick="run('PUT', '/data/x.txt', 'hi')">PUT</button></td><td>expect 405</td></tr>
+  <tr><td><button onclick="run('GET', '/secret')">GET /secret</button></td><td>expect redirect to /</td></tr>
+  <tr><td><button onclick="run('GET', '/nope.html')">GET /nope.html</button></td><td>expect 404</td></tr>
+</table>
+<pre id="errOut"></pre>
+
+<script>
+async function send(method, path, body) {
+  var opts = { method: method };
+  if (body !== undefined) {
+    opts.body = body;
+    opts.headers = { 'Content-Type': 'text/plain' };
+  }
+  try {
+    var res = await fetch(path, opts);
+    var text = await res.text();
+    var line = method + ' ' + path + '  ->  ' + res.status + ' ' + res.statusText;
+    if (res.redirected)
+      line += '  (redirected to ' + new URL(res.url).pathname + ')';
+    return line + '\n' + text.slice(0, 300);
+  } catch (e) {
+    return method + ' ' + path + '  ->  network error: ' + e.message;
+  }
+}
+
+async function run(method, path, body) {
+  document.getElementById('errOut').textContent = await send(method, path, body);
+}
+
+async function rawUpload() {
+  var name = document.getElementById('rawName').value;
+  var body = document.getElementById('rawBody').value;
+  document.getElementById('rawOut').textContent = await send('POST', '/data/' + name, body);
+  loadFiles();
+}
+
+async function del(path) {
+  document.getElementById('delOut').textContent = await send('DELETE', path);
+  loadFiles();
+}
+
+async function loadFiles() {
+  var table = document.getElementById('files');
+  table.innerHTML = '';
+  var res = await fetch('/data/uploads/');
+  var html = await res.text();
+  var doc = new DOMParser().parseFromString(html, 'text/html');
+  var links = doc.querySelectorAll('a');
+  var count = 0;
+  for (var i = 0; i < links.length; i++) {
+    var name = links[i].getAttribute('href');
+    if (name === '..' || name === '.gitkeep')
+      continue;
+    var path = '/data/uploads/' + name;
+    var row = table.insertRow();
+    row.insertCell().innerHTML = '<a href="' + path + '">' + name + '</a>';
+    var btn = document.createElement('button');
+    btn.textContent = 'DELETE';
+    btn.onclick = (function (p) { return function () { del(p); }; })(path);
+    row.insertCell().appendChild(btn);
+    count++;
+  }
+  if (count === 0)
+    table.insertRow().insertCell().textContent = '(no uploaded files)';
+}
+
+loadFiles();
+</script>
 </body>
 </html>

@@ -15,31 +15,37 @@
 std::string parseMultipart(const std::string& body, const std::string& boundary, std::string& outFilename)
 {
     std::string delimiter = "--" + boundary;
+    size_t pos = 0;
 
-    size_t start = body.find(delimiter);
-    if (start == std::string::npos)
-        return "";
-
-    size_t headerEnd = body.find("\r\n\r\n", start);
-    if (headerEnd == std::string::npos)
-        return "";
-
-    std::string headers = body.substr(start, headerEnd - start);
-    size_t fn = headers.find("filename=\"");
-    if (fn != std::string::npos)
+    while (true)
     {
-        fn += 10;
-        size_t fnEnd = headers.find('"', fn);
-        if (fnEnd != std::string::npos)
-            outFilename = headers.substr(fn, fnEnd - fn);
+        size_t start = body.find(delimiter, pos);
+        if (start == std::string::npos)
+            return "";
+        if (body.compare(start + delimiter.size(), 2, "--") == 0)
+            return "";
+
+        size_t headerEnd = body.find("\r\n\r\n", start);
+        if (headerEnd == std::string::npos)
+            return "";
+
+        size_t contentStart = headerEnd + 4;
+        size_t contentEnd = body.find("\r\n" + delimiter, contentStart);
+        if (contentEnd == std::string::npos)
+            return "";
+
+        std::string headers = body.substr(start, headerEnd - start);
+        size_t fn = headers.find("filename=\"");
+        if (fn != std::string::npos)
+        {
+            fn += 10;
+            size_t fnEnd = headers.find('"', fn);
+            if (fnEnd != std::string::npos)
+                outFilename = headers.substr(fn, fnEnd - fn);
+            return body.substr(contentStart, contentEnd - contentStart);
+        }
+        pos = contentEnd + 2;
     }
-
-    size_t contentStart = headerEnd + 4;
-    size_t contentEnd = body.find("\r\n" + delimiter, contentStart);
-    if (contentEnd == std::string::npos)
-        return "";
-
-    return body.substr(contentStart, contentEnd - contentStart);
 }
 
 /*

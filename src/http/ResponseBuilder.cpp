@@ -12,6 +12,21 @@
 
 #include "classes/imports.hpp"
 #include <sys/stat.h>
+#include <algorithm>
+#include <cctype>
+
+static bool hasHeader(const Request* req, const std::string& lowerName)
+{
+    std::map<std::string, std::string>::const_iterator it = req->_headers.begin();
+    for(; it != req->_headers.end(); it++)
+    {
+        std::string name = it->first;
+        std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+        if(name == lowerName)
+            return true;
+    }
+    return false;
+}
 
 static bool shouldKeepAlive(const Request* req)
 {
@@ -175,6 +190,14 @@ void processClientRequest(Client* client)
     size_t limit = client->serverConfig->clientMaxBodySize;
     if (bodyTooLarge(client->request, limit))
         buildErrorResponse(client, 413);
+    else if (client->request->_parseState == PARSE_COMPLETE
+        && client->request->_version == "HTTP/1.1" && !hasHeader(client->request, "host"))
+        buildErrorResponse(client, 400);
+    else if (client->request->_parseState == PARSE_COMPLETE
+        && client->request->_method == "POST"
+        && !hasHeader(client->request, "content-length")
+        && !hasHeader(client->request, "transfer-encoding"))
+        buildErrorResponse(client, 411);
     else if (client->request->_parseState == PARSE_COMPLETE)
         buildResponse(client);
     else if (client->request->_parseState == PARSE_ERROR)

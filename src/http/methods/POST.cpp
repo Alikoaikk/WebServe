@@ -44,7 +44,9 @@ Response methods::handlePost(const Request& req, const parse::serConfig& serv)
     {
         std::string filename;
         body = parseMultipart(req._body, boundary, filename);
-        if (body.empty() || filename.empty())
+        if (body.empty() || filename.empty()
+            || filename.find('/') != std::string::npos
+            || filename == "." || filename == "..")
         {
             Response res;
             res.setStatusCode(400);
