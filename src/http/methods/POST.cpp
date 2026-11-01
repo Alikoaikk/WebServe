@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
-#include "classes/serveFile_helper.hpp"
-#include "classes/POST_helper.hpp"
+#include "imports.hpp"
+#include "functions/serveFile_helper.hpp"
+#include "functions/POST_helper.hpp"
 
 Response methods::handlePost(const Request& req, const parse::serConfig& serv)
 {
@@ -36,23 +36,31 @@ Response methods::handlePost(const Request& req, const parse::serConfig& serv)
     std::string fullPath;
 
     std::string boundary;
-    std::map<std::string, std::string>::const_iterator it = req._headers.find("Content-Type");
+    std::map<std::string, std::string>::const_iterator it = req._headers.find("content-type");
     if (it != req._headers.end())
         boundary = getBoundary(it->second);
 
     if (!boundary.empty())
     {
-        std::string filename;
-        body = parseMultipart(req._body, boundary, filename);
-        if (body.empty() || filename.empty()
-            || filename.find('/') != std::string::npos
-            || filename == "." || filename == "..")
+        size_t pos = 0;
+        Response res;
+        res.setStatusCode(400);
+        while (true)
         {
-            Response res;
-            res.setStatusCode(400);
-            return res;
+            std::string filename;
+            body = parseMultipart(req._body, boundary, filename, pos);
+            if (filename.empty())
+                return res;
+            if (filename.find('/') != std::string::npos || filename == "." || filename == "..")
+            {
+                Response bad;
+                bad.setStatusCode(400);
+                return bad;
+            }
+            res = uploadFile(basePath + "/" + filename, body, req._uri);
+            if (res.getStatusCode() != 201)
+                return res;
         }
-        fullPath = basePath + "/" + filename;
     }
     else
     {

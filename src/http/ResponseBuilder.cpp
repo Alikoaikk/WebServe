@@ -10,12 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
+#include "imports.hpp"
 #include <sys/stat.h>
 #include <algorithm>
 #include <cctype>
 
-static bool hasHeader(const Request* req, const std::string& lowerName)
+static bool hasHeader(const Request* req, const std::string& lowerName, std::string* value = NULL)
 {
     std::map<std::string, std::string>::const_iterator it = req->_headers.begin();
     for(; it != req->_headers.end(); it++)
@@ -23,19 +23,20 @@ static bool hasHeader(const Request* req, const std::string& lowerName)
         std::string name = it->first;
         std::transform(name.begin(), name.end(), name.begin(), ::tolower);
         if(name == lowerName)
+        {
+            if(value)
+                *value = it->second;
             return true;
+        }
     }
     return false;
 }
 
 static bool shouldKeepAlive(const Request* req)
 {
-    std::map<std::string, std::string>::const_iterator it = req->_headers.find("Connection");
     std::string connection;
-    if(it != req->_headers.end())
-        connection = it->second;
-    else
-        connection = "";
+    hasHeader(req, "connection", &connection);
+    std::transform(connection.begin(), connection.end(), connection.begin(), ::tolower);
     if(req->_version == "HTTP/1.1")
         return connection != "close";
     return connection == "keep-alive";
@@ -43,7 +44,8 @@ static bool shouldKeepAlive(const Request* req)
 
 void finalizeResponse(Client* client)
 {
-    if(client->response->getStatusCode() >= 400)
+    int code = client->response->getStatusCode();
+    if(code == 400 || code == 411 || code == 413)
         client->keep_alive = false;
     else
         client->keep_alive = shouldKeepAlive(client->request);

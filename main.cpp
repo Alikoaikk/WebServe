@@ -5,12 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/18 00:32:10 by akoaik            #+#    #+#             */
+/*   Created: 2026/03/06 20:53:10 by akoaik            #+#    #+#             */
 /*   Updated: 2026/10/18 19:32:05 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
+#include "imports.hpp"
 #include <csignal>
 
 volatile sig_atomic_t g_running = 1 ;
@@ -83,6 +83,7 @@ int main(int argc, char *argv[])
             delete connected_clients[i];
         for (size_t i = 0; i < servers.size(); i++)
             delete servers[i];
+        std::cout << "\nWebserver stopped" << std::endl;
     }
     catch (const std::exception& e)
     {

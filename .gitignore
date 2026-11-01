@@ -1,13 +1,3 @@
 # Build artifacts
 webserv
 *.o
-docs/
-
-# Notes and logs
-Daily_notes.txt
-
-page.md
-STATUS_CODE_ERRORS_TESTS.md
-
-# Personal notes
-BASH_ZSH_MULTIOS.md

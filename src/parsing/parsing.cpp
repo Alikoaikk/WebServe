@@ -11,13 +11,11 @@
 /* ************************************************************************** */
 
 
-#include "classes/imports.hpp"
+#include "imports.hpp"
 
 parse::parse()
     : configFileName("")
-{
-    // Default constructor - creates empty parse object with no servers loaded
-}
+{}
 
 parse::parse(std::string configFileName)
     : configFileName(configFileName)
@@ -66,5 +64,3 @@ void parse::parseTokens(std::vector<std::string> tokens)
         throw std::runtime_error("expected '}' to close 'http' block");
     i++;
 }
-
-

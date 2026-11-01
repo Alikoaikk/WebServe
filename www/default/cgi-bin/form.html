@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CGI POST form</title>
+<style>
+  body { font-family: sans-serif; max-width: 760px; margin: 24px auto; padding: 0 16px; color: #222; line-height: 1.5; }
+  h1 { color: #2c5282; }
+  a { color: #2b6cb0; }
+  button { padding: 4px 12px; cursor: pointer; }
+</style>
+</head>
+<body>
+    <h1>POST to a CGI script</h1>
+    <form action="/cgi-bin/form.py" method="POST">
+        <p><label>Name: <input type="text" name="name" value="webserv"></label></p>
+        <p><label>Message: <input type="text" name="message" value="hello cgi"></label></p>
+        <button type="submit">Send POST</button>
+    </form>
+    <p><a href="/">home</a></p>
+</body>
+</html>

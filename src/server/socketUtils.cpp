@@ -6,11 +6,11 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/29 20:17:49 by msafa             #+#    #+#             */
-/*   Updated: 2026/10/02 23:47:38 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/25 18:52:25 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
+#include "imports.hpp"
 
 int createSocket()
 {
@@ -47,7 +47,7 @@ void bindSocket(int fd, const std::string& host, int port)
 
 void listenSocket(int fd)
 {
-    if (listen(fd, 128) < 0)
+    if (listen(fd, 4096) < 0)
         throw std::runtime_error("listen() failed");
 }
 

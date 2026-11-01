@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
+#include "imports.hpp"
 #include <sys/wait.h>
 #include <cctype>
 
@@ -51,7 +51,7 @@ static void buildEnv
     env.push_back("REDIRECT_STATUS=200");
     env.push_back("SCRIPT_NAME=" + req._uri);
 
-    std::map<std::string, std::string>::const_iterator it = req._headers.find("Content-Type");
+    std::map<std::string, std::string>::const_iterator it = req._headers.find("content-type");
     if (it != req._headers.end())
         env.push_back("CONTENT_TYPE=" + it->second);
 
@@ -59,7 +59,7 @@ static void buildEnv
     h = req._headers.begin();
     for(; h!= req._headers.end(); h++)
     {
-        if (h->first == "Content-Type" || h->first == "Content-Length")
+        if (h->first == "content-type" || h->first == "content-length")
             continue;
         env.push_back(headerToEnvName(h->first) + "=" + h-> second);
     }
@@ -148,8 +148,6 @@ cgi_process *cgiBuildResponse(const Request& req, const parse::locConfig& loc, c
 		execCgi(interpreter, script, env);
         std::exit(1);
 	}
-
-    // code :
 
         close(inPipe[0]);
         close(outPipe[1]);

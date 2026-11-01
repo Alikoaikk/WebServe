@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
+#include "imports.hpp"
 
 static size_t checkEnd(const std::string& output, size_t& separatorLen)
 {

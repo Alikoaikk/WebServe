@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
-#include "classes/Request_helper.hpp"
+#include "imports.hpp"
+#include "functions/Request_helper.hpp"
 #include <algorithm>
 #include <cctype>
 
@@ -74,9 +74,11 @@ static bool parseHeaderLine
     std::string value = headerLine.substr(colonPos + 1);
     if(!value.empty() && value[0] == ' ')
         value = value.substr(1);
-    headers[key] = value;
+    headers[lowerKey] = value;
     if(lowerKey == "content-length")
     {
+        if(value.empty() || value.find_first_not_of("0123456789") != std::string::npos)
+            return false;
         std::istringstream iss(value);
         iss >> contentLength;
     }

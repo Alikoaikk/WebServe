@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>multipleServers.conf: server 1</title>
+<style>
+  body { font-family: sans-serif; max-width: 760px; margin: 24px auto; padding: 0 16px; color: #222; line-height: 1.5; }
+  h1 { color: #2c5282; }
+  h2 { margin-top: 28px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+  a { color: #2b6cb0; }
+  li { margin: 4px 0; }
+  button { padding: 4px 12px; cursor: pointer; }
+</style>
+</head>
+<body>
+  <h1>multipleServers.conf: server 1 (port 8080)</h1>
+  <ul>
+    <li><a href="/files/">/files/</a>: directory listing (autoindex on)</li>
+    <li><a href="/old">/old</a>: 301 redirect to /new</li>
+    <li><a href="/cgi-bin/hello.py">/cgi-bin/hello.py</a>: Python CGI</li>
+    <li><a href="/php/hello.php?name=webserv">/php/hello.php</a>: PHP CGI</li>
+    <li><a href="/nope.html">/nope.html</a>: 404 error page</li>
+  </ul>
+  <h2>Upload a file (POST /upload)</h2>
+  <form action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <button>Upload</button>
+  </form>
+</body>
+</html>

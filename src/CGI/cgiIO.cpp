@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
+#include "imports.hpp"
 #include <sys/wait.h>
 
 static void cgiWriteBody(cgi_process *cgi)

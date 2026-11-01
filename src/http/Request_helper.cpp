@@ -6,12 +6,12 @@
 /*   By: msafa <msafa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/03 01:57:26 by msafa             #+#    #+#             */
-/*   Updated: 2026/10/03 01:57:31 by msafa            ###   ########.fr       */
+/*   Updated: 2026/10/10 18:18:31 by msafa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
-#include "classes/Request_helper.hpp"
+#include "imports.hpp"
+#include "functions/Request_helper.hpp"
 
 static int hexValue(char c)
 {

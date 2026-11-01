@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
-#include "classes/serveFile_helper.hpp"
+#include "imports.hpp"
+#include "functions/serveFile_helper.hpp"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <cstdio>

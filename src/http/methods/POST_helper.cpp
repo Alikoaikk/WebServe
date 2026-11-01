@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
-#include "classes/POST_helper.hpp"
+#include "imports.hpp"
+#include "functions/POST_helper.hpp"
 
 std::string checkBasePath(const parse::locConfig& location)
 {

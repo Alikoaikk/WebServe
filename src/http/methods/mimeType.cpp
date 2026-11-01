@@ -6,11 +6,11 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 22:22:08 by akoaik            #+#    #+#             */
-/*   Updated: 2026/07/14 22:48:13 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/07/14 23:18:13 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
+#include "imports.hpp"
 #include <string>
 
 std::string getMimeType(const std::string& path)

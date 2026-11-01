@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
+#include "imports.hpp"
 
 bool needsCgi(const std::string& uri, const parse::locConfig& loc)
 {

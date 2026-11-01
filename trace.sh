@@ -1,10 +1,10 @@
 #!/bin/bash
 # Run webserv and print every accept / request / response / close in a readable way.
 # After each event it prints the client fds that are open, and the total fds of the process.
-# Usage: ./trace.sh [config]        (default: hard.conf)
+# Usage: ./trace.sh [config]        (default: multipleServers.conf)
 # Bodies longer than SIZE bytes are cut. Change it with: SIZE=10000 ./trace.sh
 
-CONF="${1:-hard.conf}"
+CONF="${1:-multipleServers.conf}"
 SIZE="${SIZE:-2000}"
 
 strace -e trace=accept,recvfrom,sendto,close -e signal=none -s "$SIZE" -qq ./webserv "$CONF" 2>&1 | perl -ne '

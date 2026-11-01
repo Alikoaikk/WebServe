@@ -6,12 +6,12 @@
 /*   By: akoaik <akoaik@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/26 10:45:49 by akoaik            #+#    #+#             */
-/*   Updated: 2026/08/26 10:47:11 by akoaik           ###   ########.fr       */
+/*   Updated: 2026/08/28 10:47:11 by akoaik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/imports.hpp"
-#include "classes/serveFile_helper.hpp"
+#include "imports.hpp"
+#include "functions/serveFile_helper.hpp"
 
 class methods
 {
